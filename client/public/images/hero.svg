@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400" viewBox="0 0 1600 400">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e63946"/>
+      <stop offset="100%" stop-color="#b61e2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="400" fill="url(#g)"/>
+  <g fill="#fff" opacity="0.3">
+    <circle cx="200" cy="320" r="120"/>
+    <circle cx="480" cy="300" r="90"/>
+    <rect x="900" y="220" width="260" height="140" rx="6"/>
+    <rect x="1180" y="190" width="200" height="170" rx="6"/>
+  </g>
+  <text x="100" y="110" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700">Toan canh thi truong bat dong san</text>
+  <text x="100" y="160" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="18" opacity="0.9">Tim kiem va theo doi bat dong san phu hop voi ban</text>
+</svg>
+
+
