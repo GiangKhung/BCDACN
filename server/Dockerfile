@@ -1,9 +1,13 @@
 FROM node:18-alpine
-WORKDIR /usr/src/app
+
+WORKDIR /app
+
 COPY package*.json ./
-RUN npm install --production=false
+
+RUN npm install
+
 COPY . .
-EXPOSE 4000
+
+EXPOSE 5000
+
 CMD ["npm", "run", "dev"]
-
-

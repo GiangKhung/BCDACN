@@ -1,0 +1,45 @@
+========================================
+HƯỚNG DẪN THAY THẾ HÌNH ẢNH ICON
+========================================
+
+HIỆN TẠI: Đang sử dụng icon từ icons8.com (online)
+
+ĐỂ THAY BẰNG HÌNH CỦA BẠN:
+
+1. Chuẩn bị 4 file hình (PNG hoặc JPG):
+   - Kích thước: 64x64px hoặc 96x96px
+   - Nền trong suốt (PNG) hoặc nền trắng
+
+2. Đặt tên file CHÍNH XÁC như sau:
+   ✓ xem-tuoi-xay-nha.png
+   ✓ chi-phi-lam-nha.png
+   ✓ tinh-lai-suat.png
+   ✓ tu-van-phong-thuy.png
+
+3. Copy 4 file vào thư mục này:
+   E:\BCDACN\client\public\images\utilities\
+
+4. Mở file: client/src/pages/Home.jsx
+
+5. Tìm dòng có "utilities-section" (khoảng dòng 500)
+
+6. Thay đổi từ:
+   src="https://img.icons8.com/fluency/96/calendar.png"
+   
+   Thành:
+   src="/images/utilities/xem-tuoi-xay-nha.png"
+
+7. Làm tương tự cho 3 icon còn lại:
+   - calendar.png → xem-tuoi-xay-nha.png
+   - home.png → chi-phi-lam-nha.png
+   - calculator.png → tinh-lai-suat.png
+   - feng-shui.png → tu-van-phong-thuy.png
+
+8. Lưu file và refresh trình duyệt
+
+========================================
+LƯU Ý:
+- Tên file PHẢI viết thường, có dấu gạch ngang
+- Không có khoảng trắng trong tên file
+- Đường dẫn bắt đầu bằng / (slash)
+========================================

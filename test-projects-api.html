@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Projects API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .project-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .project-card img {
+            width: 100%;
+            max-width: 400px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .project-card h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+        .project-card p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Projects API</h1>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/projects');
+                const projects = await response.json();
+                
+                console.log('Projects:', projects);
+                
+                if (projects.length === 0) {
+                    resultDiv.innerHTML = '<p>Không có dự án nào</p>';
+                    return;
+                }
+                
+                resultDiv.innerHTML = projects.map(project => `
+                    <div class="project-card">
+                        <h3>${project.name}</h3>
+                        <p><strong>Location:</strong> ${project.location}</p>
+                        <p><strong>Developer:</strong> ${project.developer}</p>
+                        <p><strong>Status:</strong> ${project.status}</p>
+                        <p><strong>Main Image:</strong> ${project.mainImage || 'N/A'}</p>
+                        <img src="${project.mainImage}" alt="${project.name}" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'">
+                        <p><strong>Images count:</strong> ${project.images ? project.images.length : 0}</p>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<div class="error">Lỗi: ${error.message}</div>`;
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

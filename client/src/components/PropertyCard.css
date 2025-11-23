@@ -1,0 +1,579 @@
+/* Horizontal Layout (List view) */
+.property-card {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.property-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #667eea;
+}
+
+.property-image-wrapper {
+    position: relative;
+    width: 280px;
+    height: 200px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.property-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.property-card:hover .property-image-wrapper img {
+    transform: scale(1.08);
+}
+
+.image-badges {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.badge {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+}
+
+.video-badge {
+    background: rgba(224, 62, 82, 0.9);
+}
+
+.property-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.property-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1a1a1a;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.property-card:hover .property-info h3 {
+    color: #667eea;
+}
+
+.property-price-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #16c784 0%, #0fa968 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.area {
+    font-size: 15px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.location {
+    color: #718096;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.location::before {
+    content: '📍';
+    font-size: 16px;
+}
+
+.property-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 2px solid #f1f3f5;
+}
+
+.post-time {
+    font-size: 14px;
+    color: #a0aec0;
+}
+
+.favorite-btn {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.favorite-btn:hover {
+    border-color: #e03e52;
+    color: #e03e52;
+    transform: scale(1.1);
+}
+
+/* Grid Layout (Card view) */
+.property-card-grid {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+}
+
+.property-card-grid:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+}
+
+.property-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.property-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.property-card-grid:hover .property-image-container img {
+    transform: scale(1.1);
+}
+
+.images-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+}
+
+.images-badge svg {
+    width: 16px;
+    height: 16px;
+}
+
+.verified-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #16c784;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.verified-badge svg {
+    width: 14px;
+    height: 14px;
+}
+
+.property-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.property-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 42px;
+}
+
+.property-card-grid:hover .property-title {
+    color: #667eea;
+}
+
+.property-price-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.price-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #e03e52;
+}
+
+.area-value {
+    font-size: 14px;
+    color: #718096;
+    font-weight: 600;
+}
+
+.property-location {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.property-location svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.property-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #f1f3f5;
+    margin-top: auto;
+}
+
+.post-date {
+    font-size: 12px;
+    color: #a0aec0;
+}
+
+.btn-favorite {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-favorite svg {
+    width: 18px;
+    height: 18px;
+    color: #cbd5e0;
+    transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+    border-color: #e03e52;
+    background: #fff5f5;
+}
+
+.btn-favorite:hover svg {
+    color: #e03e52;
+    fill: #e03e52;
+}
+
+@media (max-width: 768px) {
+    .property-card {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .property-image-wrapper {
+        width: 100%;
+        height: 220px;
+    }
+
+    .property-image-container {
+        height: 180px;
+    }
+}
+
+/* 
+VIP Badge */
+.vip-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #e03e52 0%, #c73545 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(224, 62, 82, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(224, 62, 82, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(224, 62, 82, 0.6);
+    }
+}
+
+/* Property Details */
+.property-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.property-details .price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e03e52;
+}
+
+.property-details .area {
+    font-size: 15px;
+    color: #4a5568;
+    font-weight: 600;
+}
+
+.property-details .price-per-sqm {
+    font-size: 14px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.property-details .rooms {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.property-details .rooms svg {
+    color: #667eea;
+}
+
+.description {
+    font-size: 14px;
+    color: #718096;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Agent Info */
+.agent-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.agent-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.agent-avatar svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.agent-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.agent-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.agent-status {
+    font-size: 12px;
+    color: #a0aec0;
+}
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-contact {
+    background: linear-gradient(135deg, #00b4d8 0%, #0096c7 100%);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+.btn-contact:hover {
+    background: linear-gradient(135deg, #0096c7 0%, #0077b6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
+}
+
+.btn-contact svg {
+    width: 16px;
+    height: 16px;
+}
+
+.property-footer .favorite-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.property-footer .favorite-btn svg {
+    width: 20px;
+    height: 20px;
+    color: #cbd5e0;
+}
+
+.property-footer .favorite-btn:hover {
+    border-color: #e03e52;
+    background: #fff5f5;
+}
+
+.property-footer .favorite-btn:hover svg {
+    color: #e03e52;
+    stroke: #e03e52;
+}
+
+@media (max-width: 768px) {
+    .property-details {
+        gap: 8px;
+    }
+
+    .property-details .price {
+        font-size: 20px;
+    }
+
+    .btn-contact {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .card-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .btn-contact {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .property-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .agent-info {
+        width: 100%;
+    }
+}

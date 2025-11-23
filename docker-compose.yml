@@ -1,49 +1,29 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  mongo:
-    image: mongo:7
-    container_name: bds-mongo
-    restart: unless-stopped
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
-      - "27017:27017"
+      - "3000:3000"
     volumes:
-      - mongo-data:/data/db
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - server
 
   server:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: bds-server
-    restart: unless-stopped
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/bds
-      - PORT=4000
     ports:
-      - "4000:4000"
-    depends_on:
-      - mongo
+      - "5000:5000"
     volumes:
-      - ./server:/usr/src/app
-      - /usr/src/app/node_modules
-
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: bds-client
-    restart: unless-stopped
+      - ./server:/app
+      - /app/node_modules
     environment:
-      - VITE_API_BASE_URL=http://localhost:4000/api
-    ports:
-      - "5173:5173"
-    depends_on:
-      - server
-    volumes:
-      - ./client:/usr/src/app
-      - /usr/src/app/node_modules
-
-volumes:
-  mongo-data:
-
-
+      - NODE_ENV=development
+      - PORT=5000

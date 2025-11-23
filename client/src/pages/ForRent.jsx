@@ -1,0 +1,389 @@
+import { useState, useEffect } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import PropertyCard from '../components/PropertyCard'
+import MapView from '../components/MapView'
+import './ForSale.css'
+
+function ForRent() {
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const [properties, setProperties] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showMap, setShowMap] = useState(false)
+  
+  const [filters, setFilters] = useState({
+    verified: false,
+    propertyType: '',
+    priceRange: '',
+    areaRange: '',
+    city: '',
+    emailAlert: false
+  })
+  
+  const [sortBy, setSortBy] = useState('newest')
+
+  // Lấy query từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchQuery(searchFromUrl)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    fetchProperties()
+  }, [filters, sortBy, searchQuery])
+
+  const fetchProperties = async () => {
+    try {
+      setLoading(true)
+      
+      // Xây dựng query params
+      const params = new URLSearchParams()
+      
+      if (searchQuery) params.append('search', searchQuery)
+      if (filters.verified) params.append('verified', 'true')
+      if (sortBy && sortBy !== 'default') params.append('sortBy', sortBy)
+      
+      // Xử lý khoảng giá (cho thuê)
+      if (filters.priceRange && filters.priceRange !== 'negotiable') {
+        const [min, max] = filters.priceRange.split('-')
+        if (min && min !== '0') params.append('minPrice', Number(min) * 1000000)
+        if (max && max !== '+') params.append('maxPrice', Number(max) * 1000000)
+      }
+      
+      // Xử lý diện tích
+      if (filters.areaRange) {
+        const [min, max] = filters.areaRange.split('-')
+        if (min) params.append('minArea', min)
+        if (max && max !== '+') params.append('maxArea', max)
+      }
+      
+      // Xử lý thành phố
+      if (filters.city) {
+        const cityMap = {
+          'hcm': 'Hồ Chí Minh',
+          'hanoi': 'Hà Nội',
+          'danang': 'Đà Nẵng',
+          'binhduong': 'Bình Dương',
+          'khanhhoa': 'Khánh Hòa',
+          'haiphong': 'Hải Phòng',
+          'cantho': 'Cần Thơ',
+          'dongnai': 'Đồng Nai',
+          'bariavungtau': 'Bà Rịa-Vũng Tàu'
+        }
+        params.append('location', cityMap[filters.city] || filters.city)
+      }
+
+      const response = await axios.get(`http://localhost:5000/api/properties?${params.toString()}`)
+      // Lọc chỉ lấy BDS cho thuê (có pricePerMonth)
+      const forRentProperties = response.data.filter(p => p.pricePerMonth)
+      setProperties(forRentProperties)
+    } catch (error) {
+      console.error('Lỗi khi tải dữ liệu:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSearch = () => {
+    fetchProperties()
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setFilters({
+      verified: false,
+      propertyType: '',
+      priceRange: '',
+      areaRange: '',
+      city: '',
+      emailAlert: false
+    })
+    setSortBy('newest')
+  }
+
+  const priceRanges = [
+    { label: 'Thỏa thuận', value: 'negotiable' },
+    { label: 'Dưới 1 triệu', value: '0-1' },
+    { label: '1 - 3 triệu', value: '1-3' },
+    { label: '3 - 5 triệu', value: '3-5' },
+    { label: '5 - 10 triệu', value: '5-10' },
+    { label: '10 - 40 triệu', value: '10-40' },
+    { label: '40 - 70 triệu', value: '40-70' },
+    { label: '70 - 100 triệu', value: '70-100' },
+    { label: 'Trên 100 triệu', value: '100+' }
+  ]
+
+  const areaRanges = [
+    { label: 'Dưới 30 m²', value: '0-30' },
+    { label: '30 - 50 m²', value: '30-50' },
+    { label: '50 - 80 m²', value: '50-80' },
+    { label: '80 - 100 m²', value: '80-100' },
+    { label: '100 - 150 m²', value: '100-150' },
+    { label: '150 - 200 m²', value: '150-200' },
+    { label: '200 - 250 m²', value: '200-250' },
+    { label: '250 - 300 m²', value: '250-300' },
+    { label: '300 - 500 m²', value: '300-500' },
+    { label: 'Trên 500 m²', value: '500+' }
+  ]
+
+  const cities = [
+    { label: 'Hồ Chí Minh (46.544)', value: 'hcm', count: 46544 },
+    { label: 'Hà Nội (35.200)', value: 'hanoi', count: 35200 },
+    { label: 'Đà Nẵng (5.800)', value: 'danang', count: 5800 },
+    { label: 'Bình Dương (4.500)', value: 'binhduong', count: 4500 },
+    { label: 'Khánh Hòa (2.800)', value: 'khanhhoa', count: 2800 },
+    { label: 'Hải Phòng (2.200)', value: 'haiphong', count: 2200 },
+    { label: 'Cần Thơ (2.100)', value: 'cantho', count: 2100 },
+    { label: 'Đồng Nai (1.800)', value: 'dongnai', count: 1800 },
+    { label: 'Bà Rịa-Vũng Tàu (1.600)', value: 'bariavungtau', count: 1600 }
+  ]
+
+  return (
+    <div className="for-sale-page">
+      <div className="search-section">
+        <div className="container">
+          <div className="search-bar">
+            <div className="search-input-wrapper">
+              <svg className="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Thuê chung cư 2 phòng ngủ"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+            </div>
+            <button className="btn-search" onClick={handleSearch}>Tìm kiếm</button>
+            <button className="btn-map" onClick={() => setShowMap(true)}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+              </svg>
+              Xem bản đồ
+            </button>
+          </div>
+
+          {showMap && (
+            <MapView
+              properties={properties}
+              onClose={() => setShowMap(false)}
+              onPropertyClick={(property) => {
+                navigate(`/property/${property._id || property.id}`)
+              }}
+            />
+          )}
+
+          <div className="filter-bar">
+            <button className="filter-btn" onClick={resetFilters}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+              </svg>
+              Xóa bộ lọc
+            </button>
+            
+            <label className="filter-toggle">
+              <input 
+                type="checkbox" 
+                checked={filters.verified} 
+                onChange={(e) => handleFilterChange('verified', e.target.checked)} 
+              />
+              <span>Tin xác thực</span>
+            </label>
+
+            <select 
+              className="filter-select" 
+              value={filters.propertyType} 
+              onChange={(e) => handleFilterChange('propertyType', e.target.value)}
+            >
+              <option value="">Loại nhà đất</option>
+              <option value="apartment">Căn hộ/Chung cư</option>
+              <option value="house">Nhà riêng</option>
+              <option value="villa">Biệt thự</option>
+              <option value="office">Văn phòng</option>
+              <option value="townhouse">Nhà phố</option>
+            </select>
+
+            <select 
+              className="filter-select" 
+              value={filters.priceRange} 
+              onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+            >
+              <option value="">Khoảng giá</option>
+              {priceRanges.map(range => (
+                <option key={range.value} value={range.value}>{range.label}</option>
+              ))}
+            </select>
+
+            <select 
+              className="filter-select" 
+              value={filters.areaRange} 
+              onChange={(e) => handleFilterChange('areaRange', e.target.value)}
+            >
+              <option value="">Diện tích</option>
+              {areaRanges.map(range => (
+                <option key={range.value} value={range.value}>{range.label}</option>
+              ))}
+            </select>
+
+            <button className="filter-advanced">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              Môi giới chuyên nghiệp
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="content-section">
+        <div className="container">
+          <div className="content-layout">
+            <aside className="sidebar">
+              <div className="sidebar-section">
+                <h3>Lọc theo khoảng giá</h3>
+                <div className="filter-list">
+                  {priceRanges.map(range => (
+                    <label key={range.value} className="filter-item">
+                      <input 
+                        type="radio" 
+                        name="price" 
+                        value={range.value}
+                        checked={filters.priceRange === range.value}
+                        onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                      />
+                      <span>{range.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sidebar-section">
+                <h3>Lọc theo diện tích</h3>
+                <div className="filter-list">
+                  {areaRanges.map(range => (
+                    <label key={range.value} className="filter-item">
+                      <input 
+                        type="radio" 
+                        name="area" 
+                        value={range.value}
+                        checked={filters.areaRange === range.value}
+                        onChange={(e) => handleFilterChange('areaRange', e.target.value)}
+                      />
+                      <span>{range.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sidebar-section">
+                <h3>Cho thuê nhà đất</h3>
+                <div className="filter-list">
+                  {cities.map(city => (
+                    <label key={city.value} className="filter-item city-item">
+                      <input 
+                        type="radio" 
+                        name="city" 
+                        value={city.value}
+                        checked={filters.city === city.value}
+                        onChange={(e) => handleFilterChange('city', e.target.value)}
+                      />
+                      <span>{city.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </aside>
+
+            <main className="main-content">
+              <div className="results-header">
+                <div className="breadcrumb">
+                  <a href="/">Cho thuê</a> / <span>Tất cả BDS trên toàn quốc</span>
+                </div>
+                <h1>Cho thuê nhà đất trên toàn quốc</h1>
+                <p className="results-count">Hiện có {properties.length.toLocaleString()} bất động sản.</p>
+                
+                <div className="results-actions">
+                  <label className="email-alert">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    <input 
+                      type="checkbox" 
+                      checked={filters.emailAlert}
+                      onChange={(e) => handleFilterChange('emailAlert', e.target.checked)}
+                    />
+                    <span>Nhận email tin mới</span>
+                  </label>
+                  
+                  <select 
+                    className="sort-select" 
+                    value={sortBy} 
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="default">Mặc định</option>
+                    <option value="newest">Mới nhất</option>
+                    <option value="price-asc">Giá thấp đến cao</option>
+                    <option value="price-desc">Giá cao đến thấp</option>
+                    <option value="area-asc">Diện tích nhỏ đến lớn</option>
+                    <option value="area-desc">Diện tích lớn đến nhỏ</option>
+                  </select>
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="loading">
+                  <div className="spinner"></div>
+                  <p>Đang tải dữ liệu...</p>
+                </div>
+              ) : properties.length === 0 ? (
+                <div className="no-results">
+                  <svg viewBox="0 0 24 24" fill="currentColor" style={{width: '64px', height: '64px', opacity: 0.3}}>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                  </svg>
+                  <h3>Không tìm thấy bất động sản phù hợp</h3>
+                  <p>Vui lòng thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+                  <button className="btn-search" onClick={resetFilters}>Xóa bộ lọc</button>
+                </div>
+              ) : (
+                <div className="properties-list">
+                  {properties.map(property => (
+                    <PropertyCard key={property._id || property.id} property={property} />
+                  ))}
+                </div>
+              )}
+
+              {!loading && properties.length > 0 && (
+                <div className="pagination">
+                  <button className="page-btn" disabled>‹ Trước</button>
+                  <button className="page-btn active">1</button>
+                  <button className="page-btn">2</button>
+                  <button className="page-btn">3</button>
+                  <span className="page-dots">...</span>
+                  <button className="page-btn">10</button>
+                  <button className="page-btn">Sau ›</button>
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ForRent
