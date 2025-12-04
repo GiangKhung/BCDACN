@@ -1,0 +1,19 @@
+Hướng dẫn thêm ảnh cho Lê Văn C:
+
+1. Chuẩn bị ảnh:
+   - Tên file: le-van-c.jpg
+   - Kích thước khuyến nghị: 200x200px hoặc 400x400px
+   - Định dạng: JPG hoặc PNG
+   - Ảnh nên là ảnh chân dung, rõ nét
+
+2. Đặt file ảnh vào thư mục này:
+   client/public/images/agents/le-van-c.jpg
+
+3. Nếu chưa có ảnh, bạn có thể:
+   - Sử dụng ảnh từ hình bạn đã gửi
+   - Hoặc tạm thời sử dụng một trong các ảnh có sẵn
+
+Thông tin agent:
+- Tên: Lê Văn C
+- Trạng thái: Đăng hôm nay
+- Avatar: /images/agents/le-van-c.jpg

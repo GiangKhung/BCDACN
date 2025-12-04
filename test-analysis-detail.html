@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Trang Chi Tiết Phân Tích</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .test-section h2 {
+            color: #3498db;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .test-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-link {
+            display: block;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .test-link:hover {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .test-link strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .test-link span {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Trang Chi Tiết Phân Tích & Đánh Giá</h1>
+
+        <div class="test-section">
+            <h2>📋 Thông Tin Chung</h2>
+            <div class="info-box">
+                <p><strong>Trang:</strong> AnalysisDetail.jsx</p>
+                <p><strong>Route:</strong> /analysis/:id</p>
+                <p><strong>Mục đích:</strong> Hiển thị chi tiết bài phân tích, đánh giá, báo cáo thị trường BDS</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✨ Tính Năng Chính</h2>
+            <ul class="feature-list">
+                <li>Hiển thị nội dung chi tiết bài phân tích với định dạng HTML</li>
+                <li>Thông tin tác giả và vai trò chuyên gia</li>
+                <li>Thống kê lượt xem và chia sẻ</li>
+                <li>Tags/từ khóa liên quan</li>
+                <li>Nút chia sẻ lên mạng xã hội (Facebook, Twitter, LinkedIn)</li>
+                <li>Sidebar với bài viết liên quan</li>
+                <li>Form đăng ký nhận tin tức mới</li>
+                <li>Breadcrumb navigation</li>
+                <li>Responsive design cho mobile</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Test Links</h2>
+            <p>Click vào các link dưới đây để test trang chi tiết:</p>
+            <div class="test-links">
+                <a href="http://localhost:5173/analysis/1" class="test-link" target="_blank">
+                    <strong>📊 Biểu Đồ Giá</strong>
+                    <span>Biểu Đồ Giá Bất Động Sản TP.HCM Quý 4/2025</span>
+                </a>
+                <a href="http://localhost:5173/analysis/6" class="test-link" target="_blank">
+                    <strong>🎬 Video Đánh Giá</strong>
+                    <span>Review Dự Án Vinhomes Ocean Park 3</span>
+                </a>
+                <a href="http://localhost:5173/analysis/7" class="test-link" target="_blank">
+                    <strong>📈 Báo Cáo Thị Trường</strong>
+                    <span>Báo Cáo Thị Trường BDS Quý 3/2025</span>
+                </a>
+                <a href="http://localhost:5173/analysis/8" class="test-link" target="_blank">
+                    <strong>💡 Góc Nhìn Chuyên Gia</strong>
+                    <span>Phân Tích Tiềm Năng Đầu Tư BDS Khu Đông</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Layout Structure</h2>
+            <div class="info-box">
+                <p><strong>Main Layout:</strong> 2 cột (Content + Sidebar)</p>
+                <p><strong>Content Column:</strong></p>
+                <ul class="feature-list">
+                    <li>Breadcrumb navigation</li>
+                    <li>Article header (category, title, author, date, stats)</li>
+                    <li>Featured image</li>
+                    <li>Summary box</li>
+                    <li>Main content (HTML formatted)</li>
+                    <li>Tags</li>
+                    <li>Share buttons</li>
+                </ul>
+                <p><strong>Sidebar:</strong></p>
+                <ul class="feature-list">
+                    <li>Related articles (3 items)</li>
+                    <li>Newsletter subscription form</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Các Trường Hợp Test</h2>
+            <div class="info-box">
+                <p><strong>1. Navigation:</strong></p>
+                <ul class="feature-list">
+                    <li>Click vào breadcrumb để quay lại trang trước</li>
+                    <li>Click vào bài viết liên quan để chuyển trang</li>
+                </ul>
+                
+                <p><strong>2. Interaction:</strong></p>
+                <ul class="feature-list">
+                    <li>Click vào nút share để chia sẻ</li>
+                    <li>Click vào tags để lọc bài viết</li>
+                    <li>Submit form đăng ký newsletter</li>
+                </ul>
+                
+                <p><strong>3. Responsive:</strong></p>
+                <ul class="feature-list">
+                    <li>Test trên desktop (>1024px)</li>
+                    <li>Test trên tablet (768px - 1024px)</li>
+                    <li>Test trên mobile (<768px)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 Hướng Dẫn Chạy Test</h2>
+            <div class="code-block">
+                <code>
+# 1. Đảm bảo server đang chạy
+cd server
+npm start
+
+# 2. Đảm bảo client đang chạy
+cd client
+npm run dev
+
+# 3. Mở trình duyệt và truy cập
+http://localhost:5173/analysis
+
+# 4. Click vào bất kỳ bài phân tích nào để xem chi tiết
+                </code>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Checklist Kiểm Tra</h2>
+            <ul class="feature-list">
+                <li>Breadcrumb hiển thị đúng và có thể click</li>
+                <li>Thông tin tác giả hiển thị đầy đủ</li>
+                <li>Hình ảnh featured load đúng</li>
+                <li>Nội dung HTML render đúng định dạng</li>
+                <li>Tags hiển thị và có hover effect</li>
+                <li>Share buttons có màu sắc đúng</li>
+                <li>Sidebar hiển thị bài viết liên quan</li>
+                <li>Form newsletter hoạt động</li>
+                <li>Responsive trên mobile</li>
+                <li>Loading state hiển thị khi fetch data</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 Tích Hợp API</h2>
+            <div class="info-box">
+                <p><strong>Hiện tại:</strong> Sử dụng mock data trong component</p>
+                <p><strong>Cần làm:</strong></p>
+                <ul class="feature-list">
+                    <li>Tạo API endpoint: GET /api/analysis/:id</li>
+                    <li>Tạo API endpoint: GET /api/analysis/:id/related</li>
+                    <li>Thay thế mock data bằng API calls</li>
+                    <li>Xử lý error states (404, 500, etc.)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Các Loại Nội Dung</h2>
+            <div class="test-links">
+                <div class="test-link">
+                    <strong>📊 Biểu Đồ Giá</strong>
+                    <span>Phân tích xu hướng giá BDS theo khu vực, phân khúc</span>
+                </div>
+                <div class="test-link">
+                    <strong>🎬 Video Đánh Giá</strong>
+                    <span>Video review dự án, khảo sát thực tế</span>
+                </div>
+                <div class="test-link">
+                    <strong>📈 Báo Cáo Thị Trường</strong>
+                    <span>Báo cáo chuyên sâu về thị trường BDS</span>
+                </div>
+                <div class="test-link">
+                    <strong>💡 Góc Nhìn Chuyên Gia</strong>
+                    <span>Ý kiến, phân tích từ các chuyên gia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

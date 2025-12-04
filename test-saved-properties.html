@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Trang Tin Đăng Đã Lưu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .test-section h2 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        .test-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-link {
+            display: block;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .test-link:hover {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .test-link strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .test-link span {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 800px;
+            margin: 1rem auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Trang Tin Đăng Đã Lưu</h1>
+
+        <div class="test-section">
+            <h2>📋 Thông Tin Chung</h2>
+            <div class="info-box">
+                <p><strong>Trang:</strong> SavedProperties.jsx</p>
+                <p><strong>Route:</strong> /saved</p>
+                <p><strong>Mục đích:</strong> Hiển thị danh sách các bất động sản mà người dùng đã lưu</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✨ Tính Năng Chính</h2>
+            <ul class="feature-list">
+                <li>Hiển thị danh sách tin đăng đã lưu với layout card ngang</li>
+                <li>Gallery hình ảnh với 1 ảnh chính + 4 thumbnails</li>
+                <li>Nút xóa khỏi danh sách yêu thích (trái tim đỏ)</li>
+                <li>Thông tin chi tiết: giá, diện tích, số phòng, vị trí</li>
+                <li>Thông tin người đăng với nút liên hệ</li>
+                <li>Sắp xếp theo: mới nhất, cũ nhất, giá cao/thấp</li>
+                <li>Sidebar với các tiện ích hỗ trợ</li>
+                <li>Empty state khi chưa có tin đăng nào</li>
+                <li>Responsive design cho mobile</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Test Links</h2>
+            <p>Click vào link dưới đây để test trang:</p>
+            <div class="test-links">
+                <a href="http://localhost:5173/saved" class="test-link" target="_blank">
+                    <strong>💾 Tin Đăng Đã Lưu</strong>
+                    <span>Xem danh sách tin đăng đã lưu</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Layout Structure</h2>
+            <div class="info-box">
+                <p><strong>Header:</strong></p>
+                <ul class="feature-list">
+                    <li>Tiêu đề "Tin đăng đã lưu"</li>
+                    <li>Tổng số tin đăng</li>
+                    <li>Dropdown sắp xếp</li>
+                </ul>
+                
+                <p><strong>Main Content (2 cột):</strong></p>
+                <ul class="feature-list">
+                    <li>Cột trái: Danh sách property cards</li>
+                    <li>Cột phải: Sidebar với tiện ích hỗ trợ</li>
+                </ul>
+                
+                <p><strong>Property Card:</strong></p>
+                <ul class="feature-list">
+                    <li>Trái: Gallery hình ảnh (400px)</li>
+                    <li>Phải: Thông tin chi tiết</li>
+                    <li>Badge VIP (nếu có)</li>
+                    <li>Nút xóa (trái tim đỏ)</li>
+                    <li>Navigation arrows cho gallery</li>
+                    <li>Thumbnails (4 ảnh)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Các Trường Hợp Test</h2>
+            <div class="info-box">
+                <p><strong>1. Hiển thị danh sách:</strong></p>
+                <ul class="feature-list">
+                    <li>Có tin đăng: hiển thị cards</li>
+                    <li>Không có tin đăng: hiển thị empty state</li>
+                </ul>
+                
+                <p><strong>2. Gallery hình ảnh:</strong></p>
+                <ul class="feature-list">
+                    <li>Click arrows để chuyển ảnh</li>
+                    <li>Click thumbnail để xem ảnh đó</li>
+                    <li>Hiển thị "+X" nếu có nhiều hơn 4 ảnh</li>
+                </ul>
+                
+                <p><strong>3. Interactions:</strong></p>
+                <ul class="feature-list">
+                    <li>Click nút trái tim để xóa khỏi danh sách</li>
+                    <li>Click "Hiện số" để gọi điện</li>
+                    <li>Click vào card để xem chi tiết</li>
+                    <li>Thay đổi sắp xếp</li>
+                </ul>
+                
+                <p><strong>4. Responsive:</strong></p>
+                <ul class="feature-list">
+                    <li>Desktop: 2 cột (list + sidebar)</li>
+                    <li>Tablet: 1 cột, sidebar xuống dưới</li>
+                    <li>Mobile: Stack layout</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 Hướng Dẫn Chạy Test</h2>
+            <div class="code-block">
+                <code>
+# 1. Đảm bảo server đang chạy
+cd server
+npm start
+
+# 2. Đảm bảo client đang chạy
+cd client
+npm run dev
+
+# 3. Mở trình duyệt và truy cập
+http://localhost:5173/saved
+
+# 4. Test các tính năng:
+- Xem danh sách tin đăng
+- Click arrows để xem ảnh
+- Click trái tim để xóa
+- Thay đổi sắp xếp
+- Test responsive
+                </code>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Checklist Kiểm Tra</h2>
+            <ul class="feature-list">
+                <li>Header hiển thị đúng với tổng số tin</li>
+                <li>Dropdown sắp xếp hoạt động</li>
+                <li>Property cards hiển thị đầy đủ thông tin</li>
+                <li>Gallery navigation hoạt động mượt</li>
+                <li>Thumbnails highlight ảnh đang xem</li>
+                <li>Nút trái tim xóa tin khỏi danh sách</li>
+                <li>Nút liên hệ hoạt động</li>
+                <li>Click vào card chuyển đến trang chi tiết</li>
+                <li>Sidebar hiển thị tiện ích</li>
+                <li>Empty state hiển thị khi không có tin</li>
+                <li>Responsive trên mobile</li>
+                <li>Hover effects mượt mà</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 Tích Hợp Với PropertyCard</h2>
+            <div class="info-box">
+                <p><strong>Để tích hợp chức năng lưu tin:</strong></p>
+                <ol style="padding-left: 2rem; margin: 1rem 0;">
+                    <li>Thêm state quản lý saved properties (localStorage hoặc API)</li>
+                    <li>Thêm nút trái tim vào PropertyCard component</li>
+                    <li>Toggle saved state khi click</li>
+                    <li>Sync với trang SavedProperties</li>
+                </ol>
+            </div>
+            
+            <div class="code-block">
+                <code>
+// Example: Add to PropertyCard.jsx
+const [isSaved, setIsSaved] = useState(false);
+
+const handleSave = () => {
+  setIsSaved(!isSaved);
+  // Save to localStorage or API
+  const saved = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+  if (!isSaved) {
+    saved.push(property.id);
+  } else {
+    const index = saved.indexOf(property.id);
+    saved.splice(index, 1);
+  }
+  localStorage.setItem('savedProperties', JSON.stringify(saved));
+};
+
+// In render:
+&lt;button className="save-btn" onClick={handleSave}&gt;
+  &lt;i className={`fa${isSaved ? 's' : 'r'} fa-heart`}&gt;&lt;/i&gt;
+&lt;/button&gt;
+                </code>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Tính Năng Mở Rộng</h2>
+            <ul class="feature-list">
+                <li>Thêm filter theo loại BDS (căn hộ, nhà phố, đất...)</li>
+                <li>Thêm filter theo khu vực</li>
+                <li>Thêm filter theo khoảng giá</li>
+                <li>So sánh nhiều tin đăng</li>
+                <li>Chia sẻ danh sách yêu thích</li>
+                <li>Export danh sách ra PDF</li>
+                <li>Nhận thông báo khi có giá mới</li>
+                <li>Ghi chú cho từng tin đăng</li>
+                <li>Tạo nhiều danh sách (folders)</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>💾 LocalStorage Structure</h2>
+            <div class="code-block">
+                <code>
+// Saved properties IDs
+localStorage.setItem('savedProperties', JSON.stringify([1, 2, 3, 4]));
+
+// Or with full data
+const savedData = {
+  properties: [
+    { id: 1, savedDate: '2025-11-26', notes: 'Cần xem thực tế' },
+    { id: 2, savedDate: '2025-11-25', notes: '' }
+  ]
+};
+localStorage.setItem('savedPropertiesData', JSON.stringify(savedData));
+                </code>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔌 API Endpoints (Tương Lai)</h2>
+            <div class="code-block">
+                <code>
+// Get saved properties
+GET /api/users/:userId/saved-properties
+
+// Add to saved
+POST /api/users/:userId/saved-properties
+Body: { propertyId: 123 }
+
+// Remove from saved
+DELETE /api/users/:userId/saved-properties/:propertyId
+
+// Update notes
+PATCH /api/users/:userId/saved-properties/:propertyId
+Body: { notes: 'My notes' }
+                </code>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Responsive Breakpoints</h2>
+            <div class="info-box">
+                <p><strong>Desktop (>1200px):</strong> 2 cột, card ngang 400px gallery</p>
+                <p><strong>Tablet (768px - 1200px):</strong> 1 cột, card ngang 350px gallery</p>
+                <p><strong>Mobile (<768px):</strong> 1 cột, card dọc, gallery full width</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Color Scheme</h2>
+            <div class="info-box">
+                <p><strong>Primary:</strong> #e74c3c (Red - for heart, price)</p>
+                <p><strong>Secondary:</strong> #00a699 (Teal - for contact button)</p>
+                <p><strong>Text:</strong> #1a1a1a (Dark), #666 (Gray)</p>
+                <p><strong>Background:</strong> #f5f5f5 (Light gray)</p>
+                <p><strong>Card:</strong> #ffffff (White)</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
