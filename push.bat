@@ -32,18 +32,48 @@ echo [4/6] Kiem tra remote...
 git remote -v
 
 echo.
-echo [5/6] Pull code moi nhat...
-git pull origin main
+echo [5/6] Kiem tra branch...
+git branch -r | findstr "origin/main" >nul 2>&1
 if errorlevel 1 (
+    git branch -r | findstr "origin/master" >nul 2>&1
+    if errorlevel 1 (
+        echo Repository trong hoac chua co branch. Se tao branch moi...
+        set BRANCH=main
+        set FIRST_PUSH=1
+    ) else (
+        echo Branch chinh la 'master'
+        set BRANCH=master
+        set FIRST_PUSH=0
+    )
+) else (
+    echo Branch chinh la 'main'
+    set BRANCH=main
+    set FIRST_PUSH=0
+)
+
+echo Dang su dung branch: %BRANCH%
+
+if "%FIRST_PUSH%"=="0" (
     echo.
-    echo [WARNING] Co the co conflict. Vui long giai quyet conflict roi chay lai script.
-    pause
-    exit /b 1
+    echo Pull code moi nhat tu %BRANCH%...
+    git pull origin %BRANCH%
+    if errorlevel 1 (
+        echo.
+        echo [WARNING] Co the co conflict. Vui long giai quyet conflict roi chay lai script.
+        pause
+        exit /b 1
+    )
 )
 
 echo.
 echo [6/6] Push code len GitHub...
-git push origin main
+if "%FIRST_PUSH%"=="1" (
+    echo Lan dau push, dang tao branch %BRANCH%...
+    git branch -M %BRANCH%
+    git push -u origin %BRANCH%
+) else (
+    git push origin %BRANCH%
+)
 if errorlevel 1 (
     echo.
     echo [ERROR] Push that bai! 

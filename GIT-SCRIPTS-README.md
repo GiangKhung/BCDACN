@@ -2,7 +2,7 @@
 
 ## 📁 Các File Script
 
-### 1. `setup-git.bat` - Setup Git Repository (Chạy 1 lần đầu)
+### 1. `setup-git.bat` - Setup Git Repository (Chạy 1 lần đầu tiên)
 
 **Chức năng:**
 - Cấu hình Git user (name, email)
@@ -24,7 +24,29 @@ setup-git.bat
 
 ---
 
-### 2. `push.bat` - Push Code Lên GitHub (Dùng thường xuyên)
+### 2. `first-push.bat` - Push Lần Đầu Tiên (Chạy 1 lần)
+
+**Chức năng:**
+- Tự động phát hiện branch (main/master)
+- Tạo branch mới nếu cần
+- Push lần đầu với đúng branch
+- Hướng dẫn xác thực nếu lỗi
+
+**Cách dùng:**
+```bash
+# Double-click file first-push.bat
+# Hoặc chạy trong terminal:
+first-push.bat
+```
+
+**Khi nào dùng:**
+- Lần đầu tiên push code lên GitHub
+- Khi gặp lỗi "couldn't find remote ref main"
+- Khi repository trống
+
+---
+
+### 3. `push.bat` - Push Code Lên GitHub (Dùng thường xuyên)
 
 **Chức năng:**
 - Kiểm tra trạng thái Git
@@ -46,7 +68,28 @@ push.bat
 
 ---
 
-### 3. `HUONG-DAN-PUSH-GITHUB.md` - Hướng Dẫn Chi Tiết
+### 4. `check-status.bat` - Kiểm Tra Trạng Thái
+
+**Chức năng:**
+- Hiển thị phiên bản Git
+- Hiển thị cấu hình user
+- Hiển thị trạng thái repository
+- Hiển thị remote và branches
+- Hiển thị commit gần nhất
+
+**Cách dùng:**
+```bash
+check-status.bat
+```
+
+**Khi nào dùng:**
+- Khi muốn kiểm tra trạng thái Git
+- Khi gặp lỗi và cần debug
+- Trước khi push để đảm bảo mọi thứ OK
+
+---
+
+### 5. `HUONG-DAN-PUSH-GITHUB.md` - Hướng Dẫn Chi Tiết
 
 **Nội dung:**
 - Hướng dẫn từng bước push code
@@ -61,6 +104,21 @@ push.bat
 
 ---
 
+### 6. `FIX-PUSH-ERROR.md` - Hướng Dẫn Sửa Lỗi
+
+**Nội dung:**
+- Giải quyết lỗi "couldn't find remote ref main"
+- Giải quyết lỗi "Permission denied"
+- Giải quyết các lỗi thường gặp
+- Debug commands
+
+**Khi nào đọc:**
+- Khi gặp lỗi push
+- Khi cần xác thực GitHub
+- Khi cần debug Git
+
+---
+
 ## 🚀 Quick Start
 
 ### Lần Đầu Tiên:
@@ -72,18 +130,29 @@ push.bat
    - Nhập tên và email
    - Script sẽ tự động setup mọi thứ
 
-2. **Push code:**
+2. **Push code lần đầu:**
    ```bash
-   push.bat
+   first-push.bat
    ```
    - Nhập commit message
    - Script sẽ tự động push
+   - Nếu lỗi, làm theo hướng dẫn
 
 ### Các Lần Sau:
 
 Chỉ cần chạy:
 ```bash
 push.bat
+```
+
+### Khi Gặp Lỗi:
+
+```bash
+# Kiểm tra trạng thái
+check-status.bat
+
+# Đọc hướng dẫn sửa lỗi
+# Mở file: FIX-PUSH-ERROR.md
 ```
 
 ---
