@@ -126,8 +126,8 @@ router.post('/login', async (req, res) => {
     }
 })
 
-// Lấy thông tin user hiện tại
-router.get('/me', async (req, res) => {
+// Middleware xác thực
+const auth = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '')
 
@@ -148,25 +148,98 @@ router.get('/me', async (req, res) => {
             })
         }
 
+        req.user = user
+        next()
+    } catch (error) {
+        console.error('Auth error:', error)
+        res.status(401).json({
+            success: false,
+            message: 'Token không hợp lệ'
+        })
+    }
+}
+
+// Lấy thông tin user hiện tại
+router.get('/me', auth, async (req, res) => {
+    try {
         res.json({
             success: true,
             data: {
                 user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone,
-                    avatar: user.avatar,
-                    role: user.role
+                    id: req.user._id,
+                    name: req.user.name,
+                    email: req.user.email,
+                    phone: req.user.phone,
+                    avatar: req.user.avatar,
+                    role: req.user.role
                 }
             }
         })
     } catch (error) {
         console.error('Get user error:', error)
-        res.status(401).json({
+        res.status(500).json({
             success: false,
-            message: 'Token không hợp lệ'
+            message: 'Lỗi server'
         })
+    }
+})
+
+// Lấy thông tin profile
+router.get('/profile', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id)
+            .select('-password')
+            .populate('savedProperties')
+
+        res.json(user)
+    } catch (error) {
+        console.error('Get profile error:', error)
+        res.status(500).json({ message: 'Lỗi server' })
+    }
+})
+
+// Cập nhật profile
+router.put('/profile', auth, async (req, res) => {
+    try {
+        const { name, phone, avatar } = req.body
+
+        const user = await User.findById(req.user._id)
+
+        if (name) user.name = name
+        if (phone !== undefined) user.phone = phone
+        if (avatar !== undefined) user.avatar = avatar
+
+        await user.save()
+
+        const updatedUser = await User.findById(user._id).select('-password')
+        res.json(updatedUser)
+    } catch (error) {
+        console.error('Update profile error:', error)
+        res.status(500).json({ message: 'Lỗi server' })
+    }
+})
+
+// Đổi mật khẩu
+router.put('/change-password', auth, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body
+
+        const user = await User.findById(req.user._id)
+
+        // Kiểm tra mật khẩu hiện tại
+        const isPasswordValid = await user.comparePassword(currentPassword)
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Mật khẩu hiện tại không đúng' })
+        }
+
+        // Cập nhật mật khẩu mới
+        user.password = newPassword
+        await user.save()
+
+        res.json({ message: 'Đổi mật khẩu thành công' })
+    } catch (error) {
+        console.error('Change password error:', error)
+        res.status(500).json({ message: 'Lỗi server' })
     }
 })
 

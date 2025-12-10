@@ -520,6 +520,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.individual-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .individual-avatar img {
@@ -528,12 +535,22 @@
     object-fit: cover;
 }
 
+.individual-name-link {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.individual-name-link:hover h3 {
+    color: #667eea;
+}
+
 .individual-info h3 {
     font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 1rem;
     text-transform: uppercase;
+    transition: all 0.3s ease;
 }
 
 .individual-details {
@@ -560,4 +577,89 @@
         height: 120px;
         margin: 0 auto;
     }
+}
+
+/* Reset Filter Button */
+.btn-reset-filter {
+    padding: 14px 20px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.btn-reset-filter:hover {
+    background: #f8f9fa;
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+}
+
+.btn-reset-filter svg {
+    width: 20px;
+    height: 20px;
+    color: #718096;
+}
+
+/* Results Count */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.results-count {
+    font-size: 16px;
+    font-weight: 500;
+    color: #718096;
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.no-results svg {
+    width: 64px;
+    height: 64px;
+    color: #cbd5e0;
+    margin-bottom: 1.5rem;
+}
+
+.no-results h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+}
+
+.no-results p {
+    font-size: 15px;
+    color: #718096;
+    margin-bottom: 2rem;
+}
+
+.btn-reset {
+    padding: 12px 32px;
+    background: #e03e52;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-reset:hover {
+    background: #c73545;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(224, 62, 82, 0.3);
 }

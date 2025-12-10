@@ -53,11 +53,11 @@ function Home() {
     
     // Điều hướng dựa trên tab đang active
     if (activeTab === "mua") {
-      navigate(`/nha-dat-ban?${params.toString()}`);
+      navigate(`/for-sale?${params.toString()}`);
     } else if (activeTab === "thue") {
-      navigate(`/nha-dat-cho-thue?${params.toString()}`);
+      navigate(`/for-rent?${params.toString()}`);
     } else if (activeTab === "duan") {
-      navigate(`/du-an?${params.toString()}`);
+      navigate(`/projects?${params.toString()}`);
     }
   };
 

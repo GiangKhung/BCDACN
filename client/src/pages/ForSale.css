@@ -1,13 +1,13 @@
 .for-sale-page {
-    background: #0f0f1a;
+    background: #f8f9fa;
     min-height: 100vh;
 }
 
 /* Search Section */
 .search-section {
-    background: #1a1a2e;
+    background: white;
     padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .container {
@@ -41,11 +41,11 @@
 .search-input-wrapper input {
     width: 100%;
     padding: 12px 16px 12px 44px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
+    background: #f8f9fa;
+    color: #2d3748;
     transition: all 0.3s ease;
 }
 
@@ -56,7 +56,7 @@
 .search-input-wrapper input:focus {
     outline: none;
     border-color: #e03e52;
-    background: rgba(255, 255, 255, 0.08);
+    background: white;
 }
 
 .btn-search {
@@ -110,8 +110,8 @@
 
 .filter-btn {
     padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -119,13 +119,13 @@
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    color: #fff;
+    color: #2d3748;
     transition: all 0.2s ease;
 }
 
 .filter-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: #e2e8f0;
+    border-color: #cbd5e0;
 }
 
 .filter-btn svg {
@@ -139,18 +139,18 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    color: #fff;
+    color: #2d3748;
     transition: all 0.2s ease;
 }
 
 .filter-toggle:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #e2e8f0;
 }
 
 .filter-toggle input[type="checkbox"] {
@@ -161,29 +161,29 @@
 }
 
 .filter-toggle span {
-    color: #fff;
+    color: #2d3748;
 }
 
 .filter-select {
     padding: 8px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8f9fa;
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    color: #fff;
+    color: #2d3748;
     transition: all 0.2s ease;
     min-width: 130px;
 }
 
 .filter-select option {
-    background: #1a1a2e;
-    color: #fff;
+    background: white;
+    color: #2d3748;
 }
 
 .filter-select:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #e2e8f0;
 }
 
 .filter-select:focus {
@@ -193,8 +193,8 @@
 
 .filter-advanced {
     padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -202,12 +202,12 @@
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    color: #fff;
+    color: #2d3748;
     transition: all 0.2s ease;
 }
 
 .filter-advanced:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #e2e8f0;
 }
 
 .filter-advanced svg {
@@ -229,11 +229,11 @@
 
 /* Sidebar */
 .sidebar {
-    background: #1a1a2e;
+    background: white;
     padding: 1.5rem;
     border-radius: 12px;
     height: fit-content;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     position: sticky;
     top: 100px;
     order: 2;
@@ -242,7 +242,7 @@
 .sidebar-section {
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .sidebar-section:last-child {
@@ -255,7 +255,7 @@
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #fff;
+    color: #2d3748;
 }
 
 .filter-list {
@@ -274,7 +274,7 @@
 }
 
 .filter-item:hover span {
-    color: #fff;
+    color: #2d3748;
 }
 
 .filter-item input[type="radio"] {
@@ -283,7 +283,7 @@
 
 .filter-item span {
     font-size: 14px;
-    color: #a0aec0;
+    color: #64748b;
     flex: 1;
     transition: color 0.2s ease;
 }
@@ -294,15 +294,15 @@
 }
 
 .city-item span {
-    color: #a0aec0;
+    color: #64748b;
 }
 
 /* Main Content */
 .main-content {
-    background: #1a1a2e;
+    background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     order: 1;
 }
 
@@ -312,29 +312,29 @@
 
 .breadcrumb {
     font-size: 13px;
-    color: #a0aec0;
+    color: #64748b;
     margin-bottom: 8px;
 }
 
 .breadcrumb a {
-    color: #a0aec0;
+    color: #64748b;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .breadcrumb a:hover {
-    color: #fff;
+    color: #2d3748;
 }
 
 .results-header h1 {
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #fff;
+    color: #2d3748;
 }
 
 .results-count {
-    color: #a0aec0;
+    color: #64748b;
     margin-bottom: 1rem;
     font-size: 14px;
 }
@@ -354,12 +354,12 @@
     cursor: pointer;
     padding: 8px 14px;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8f9fa;
     transition: all 0.2s ease;
 }
 
 .email-alert:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #e2e8f0;
 }
 
 .email-alert input[type="checkbox"] {
@@ -378,28 +378,28 @@
 .email-alert span {
     font-weight: 500;
     font-size: 13px;
-    color: #fff;
+    color: #2d3748;
 }
 
 .sort-select {
     padding: 8px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: #f8f9fa;
+    color: #2d3748;
     transition: all 0.2s ease;
 }
 
 .sort-select option {
-    background: #1a1a2e;
-    color: #fff;
+    background: white;
+    color: #2d3748;
 }
 
 .sort-select:hover {
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: #cbd5e0;
 }
 
 .sort-select:focus {
@@ -418,14 +418,14 @@
 .loading {
     text-align: center;
     padding: 4rem 2rem;
-    color: #a0aec0;
+    color: #64748b;
 }
 
 .spinner {
     width: 40px;
     height: 40px;
     margin: 0 auto 1rem;
-    border: 3px solid rgba(255, 255, 255, 0.1);
+    border: 3px solid #e2e8f0;
     border-top-color: #00b4d8;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -446,20 +446,20 @@
 .no-results {
     text-align: center;
     padding: 4rem 2rem;
-    color: #a0aec0;
+    color: #64748b;
 }
 
 .no-results svg {
     width: 64px;
     height: 64px;
     margin: 0 auto 1rem;
-    color: #4a5568;
+    color: #cbd5e0;
 }
 
 .no-results h3 {
     font-size: 18px;
     font-weight: 600;
-    color: #fff;
+    color: #2d3748;
     margin-bottom: 0.5rem;
 }
 
@@ -479,13 +479,13 @@
     min-width: 36px;
     height: 36px;
     padding: 0 10px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #e2e8f0;
+    background: white;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
     font-size: 13px;
-    color: #a0aec0;
+    color: #64748b;
     transition: all 0.2s ease;
 }
 
@@ -510,7 +510,7 @@
     padding: 0 8px;
     display: flex;
     align-items: center;
-    color: #4a5568;
+    color: #cbd5e0;
     font-weight: 600;
 }
 

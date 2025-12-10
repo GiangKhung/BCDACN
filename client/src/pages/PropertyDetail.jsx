@@ -492,40 +492,52 @@ function PropertyDetail() {
 
           <div className="detail-sidebar">
             <div className="contact-card">
-              <h3>Liên hệ</h3>
               {property.agent ? (
-                <div className="agent-info-detail">
-                  <div className="agent-avatar-large">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
+                <div className="agent-profile">
+                  <div className="agent-avatar-circle">
+                    <img 
+                      src={property.agent.avatar || '/images/agents/default-avatar.jpg'} 
+                      alt={property.agent.name}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextElementSibling.style.display = 'flex'
+                      }}
+                    />
+                    <div className="agent-avatar-fallback">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
                   </div>
-                  <div>
-                    <div className="agent-name">{property.agent.name}</div>
-                    <div className="agent-status">{property.agent.status}</div>
-                  </div>
+                  <h3 className="agent-name-large">{property.agent.name}</h3>
                 </div>
               ) : (
-                <div className="agent-placeholder">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                  </svg>
-                  <span>Chủ nhà</span>
+                <div className="agent-profile">
+                  <div className="agent-avatar-circle">
+                    <div className="agent-avatar-fallback" style={{display: 'flex'}}>
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="agent-name-large">Nguyễn Thành Nam</h3>
                 </div>
               )}
               
-              <button className="btn-call">
+              <button className="btn-zalo">
+                <img 
+                  src="/images/logo/zalo-icon.png" 
+                  alt="Zalo" 
+                  style={{width: '28px', height: '28px'}}
+                />
+                Chat qua Zalo
+              </button>
+              
+              <button className="btn-call-teal">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
                 </svg>
-                0901 348 *** - Hiện số
-              </button>
-              
-              <button className="btn-message">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
-                </svg>
-                Nhắn tin
+                0965 082 *** - Hiện số
               </button>
               
               <button className="btn-favorite-detail">

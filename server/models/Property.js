@@ -135,6 +135,10 @@ const propertySchema = new mongoose.Schema({
         default: 'available'
     },
     // Thông tin người đăng
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     agent: {
         name: String,
         phone: String,

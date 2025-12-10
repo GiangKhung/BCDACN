@@ -427,15 +427,18 @@
 }
 
 .newsletter-box .sidebar-title {
-    color: white;
+    color: auto;
     border-bottom-color: rgba(255, 255, 255, 0.3);
+    font-weight: 700;
 }
 
 .newsletter-box p {
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
-    opacity: 0.95;
+    color: #010101;
+    opacity: 1;
+    font-weight: 500;
 }
 
 .newsletter-form {
@@ -449,6 +452,12 @@
     border: none;
     border-radius: 6px;
     font-size: 0.95rem;
+    color: #2d3748;
+    background: white;
+}
+
+.newsletter-form input::placeholder {
+    color: #94a3b8;
 }
 
 .newsletter-form input:focus {

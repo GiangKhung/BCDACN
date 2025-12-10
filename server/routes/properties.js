@@ -1,4 +1,5 @@
 import express from 'express'
+import jwt from 'jsonwebtoken'
 import Property from '../models/Property.js'
 
 const router = express.Router()
@@ -81,6 +82,48 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Middleware xác thực
+const auth = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '')
+        if (!token) {
+            return res.status(401).json({ message: 'Không tìm thấy token' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key')
+        req.userId = decoded.id
+        next()
+    } catch (error) {
+        console.error('Auth error:', error)
+        res.status(401).json({ message: 'Token không hợp lệ' })
+    }
+}
+
+// Tạo property mới
+router.post('/', auth, async (req, res) => {
+    try {
+        const propertyData = {
+            ...req.body,
+            userId: req.userId
+        }
+        const property = new Property(propertyData)
+        const newProperty = await property.save()
+        res.status(201).json(newProperty)
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+})
+
+// Lấy properties của user hiện tại
+router.get('/my-properties', auth, async (req, res) => {
+    try {
+        const properties = await Property.find({ userId: req.userId }).sort({ createdAt: -1 })
+        res.json(properties)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
 // Lấy property theo ID
 router.get('/:id', async (req, res) => {
     try {
@@ -91,17 +134,6 @@ router.get('/:id', async (req, res) => {
         res.json(property)
     } catch (error) {
         res.status(500).json({ message: error.message })
-    }
-})
-
-// Tạo property mới
-router.post('/', async (req, res) => {
-    try {
-        const property = new Property(req.body)
-        const newProperty = await property.save()
-        res.status(201).json(newProperty)
-    } catch (error) {
-        res.status(400).json({ message: error.message })
     }
 })
 

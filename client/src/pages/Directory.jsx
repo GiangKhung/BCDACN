@@ -16,18 +16,28 @@ function Directory() {
     project: ''
   })
   const [activeTab, setActiveTab] = useState('company')
+  const [allCompanies, setAllCompanies] = useState([])
+  const [allIndividuals, setAllIndividuals] = useState([])
 
   useEffect(() => {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    applyFilters()
+  }, [searchQuery, filters, allCompanies, allIndividuals])
+
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/directory')
+      setAllCompanies(response.data.companies || mockCompanies)
+      setAllIndividuals(response.data.individuals || mockIndividuals)
       setCompanies(response.data.companies || mockCompanies)
       setIndividuals(response.data.individuals || mockIndividuals)
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu:', error)
+      setAllCompanies(mockCompanies)
+      setAllIndividuals(mockIndividuals)
       setCompanies(mockCompanies)
       setIndividuals(mockIndividuals)
     } finally {
@@ -35,12 +45,98 @@ function Directory() {
     }
   }
 
+  const applyFilters = () => {
+    let filteredCompanies = [...allCompanies]
+    let filteredIndividuals = [...allIndividuals]
+
+    // Lọc theo từ khóa tìm kiếm
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filteredCompanies = filteredCompanies.filter(company =>
+        company.name?.toLowerCase().includes(query) ||
+        company.address?.toLowerCase().includes(query) ||
+        company.areas?.some(area => area.toLowerCase().includes(query))
+      )
+      filteredIndividuals = filteredIndividuals.filter(individual =>
+        individual.name?.toLowerCase().includes(query) ||
+        individual.address?.toLowerCase().includes(query) ||
+        individual.areas?.some(area => area.toLowerCase().includes(query))
+      )
+    }
+
+    // Lọc theo loại giao dịch
+    if (filters.serviceType) {
+      filteredCompanies = filteredCompanies.filter(company =>
+        company.serviceType === filters.serviceType || company.serviceType === 'both'
+      )
+      filteredIndividuals = filteredIndividuals.filter(individual =>
+        individual.serviceType === filters.serviceType || individual.serviceType === 'both'
+      )
+    }
+
+    // Lọc theo loại nhà đất
+    if (filters.propertyType) {
+      filteredCompanies = filteredCompanies.filter(company =>
+        company.propertyTypes?.includes(filters.propertyType)
+      )
+      filteredIndividuals = filteredIndividuals.filter(individual =>
+        individual.propertyTypes?.includes(filters.propertyType)
+      )
+    }
+
+    // Lọc theo thành phố
+    if (filters.city) {
+      filteredCompanies = filteredCompanies.filter(company =>
+        company.city === filters.city ||
+        company.address?.toLowerCase().includes(filters.city)
+      )
+      filteredIndividuals = filteredIndividuals.filter(individual =>
+        individual.city === filters.city ||
+        individual.address?.toLowerCase().includes(filters.city)
+      )
+    }
+
+    // Lọc theo quận/huyện
+    if (filters.district) {
+      filteredCompanies = filteredCompanies.filter(company =>
+        company.district === filters.district ||
+        company.address?.toLowerCase().includes(filters.district.toLowerCase())
+      )
+      filteredIndividuals = filteredIndividuals.filter(individual =>
+        individual.district === filters.district ||
+        individual.address?.toLowerCase().includes(filters.district.toLowerCase())
+      )
+    }
+
+    setCompanies(filteredCompanies)
+    setIndividuals(filteredIndividuals)
+  }
+
   const handleSearch = () => {
-    console.log('Tìm kiếm:', searchQuery, filters)
+    applyFilters()
   }
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setFilters({
+      serviceType: '',
+      propertyType: '',
+      city: '',
+      district: '',
+      project: ''
+    })
+    setCompanies(allCompanies)
+    setIndividuals(allIndividuals)
   }
 
   const categories = {
@@ -86,6 +182,7 @@ function Directory() {
               placeholder="Nhập từ khóa tìm kiếm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
             <button className="btn-search-directory" onClick={handleSearch}>
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -148,6 +245,11 @@ function Directory() {
             <button className="btn-search-red" onClick={handleSearch}>
               Tìm kiếm
             </button>
+            <button className="btn-reset-filter" onClick={resetFilters} title="Xóa bộ lọc">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -170,7 +272,14 @@ function Directory() {
               </button>
             </div>
 
-            <h2 className="section-title">Danh bạ nhà môi giới</h2>
+            <h2 className="section-title">
+              Danh bạ nhà môi giới
+              {!loading && (
+                <span className="results-count">
+                  ({activeTab === 'company' ? companies.length : individuals.length} kết quả)
+                </span>
+              )}
+            </h2>
 
             {loading ? (
               <div className="loading">
@@ -180,17 +289,39 @@ function Directory() {
             ) : (
               <>
                 {activeTab === 'company' ? (
-                  <div className="companies-list">
-                    {companies.map(company => (
-                      <CompanyCard key={company.id} company={company} />
-                    ))}
-                  </div>
+                  companies.length > 0 ? (
+                    <div className="companies-list">
+                      {companies.map(company => (
+                        <CompanyCard key={company.id} company={company} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-results">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                      </svg>
+                      <h3>Không tìm thấy công ty môi giới phù hợp</h3>
+                      <p>Vui lòng thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+                      <button className="btn-reset" onClick={resetFilters}>Xóa bộ lọc</button>
+                    </div>
+                  )
                 ) : (
-                  <div className="individuals-list">
-                    {individuals.map(individual => (
-                      <IndividualCard key={individual.id} individual={individual} />
-                    ))}
-                  </div>
+                  individuals.length > 0 ? (
+                    <div className="individuals-list">
+                      {individuals.map(individual => (
+                        <IndividualCard key={individual.id} individual={individual} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-results">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                      </svg>
+                      <h3>Không tìm thấy cá nhân môi giới phù hợp</h3>
+                      <p>Vui lòng thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+                      <button className="btn-reset" onClick={resetFilters}>Xóa bộ lọc</button>
+                    </div>
+                  )
                 )}
 
                 {/* Pagination */}
@@ -263,11 +394,13 @@ function Directory() {
 function CompanyCard({ company }) {
   return (
     <div className="company-card">
-      <div className="company-logo">
+      <Link to={`/agent/${company.id}`} className="company-logo">
         <img src={company.logo} alt={company.name} />
-      </div>
+      </Link>
       <div className="company-info">
-        <h3>{company.name}</h3>
+        <Link to={`/agent/${company.id}`} className="company-name-link">
+          <h3>{company.name}</h3>
+        </Link>
         <div className="company-details">
           <div className="detail-item">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -301,11 +434,13 @@ function CompanyCard({ company }) {
 function IndividualCard({ individual }) {
   return (
     <div className="individual-card">
-      <div className="individual-avatar">
+      <Link to={`/agent/${individual.id}`} className="individual-avatar">
         <img src={individual.avatar} alt={individual.name} />
-      </div>
+      </Link>
       <div className="individual-info">
-        <h3>{individual.name}</h3>
+        <Link to={`/agent/${individual.id}`} className="individual-name-link">
+          <h3>{individual.name}</h3>
+        </Link>
         <div className="individual-details">
           <div className="detail-item">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -352,16 +487,16 @@ const mockCompanies = [
   },
   {
     id: 2,
-    name: 'CÔNG TY CỔ PHẦN PHÚ THANH T&T',
-    logo: '/images/companies/phu-thanh.png', // Thay bằng logo của bạn
-    address: 'Lô biệt thự 28 số 35, Lê Văn Thiêm, Thanh Xuân, Hà Nội, Việt Nam',
-    phone: '0989423259',
+    name: 'Công ty Cổ phần Đầu tư Địa ốc Hoàng Quân',
+    logo: '/images/companies/hoang-quan.png', // Thay bằng logo của bạn
+    address: '123 Nguyễn Văn Linh, Quận 7, Hồ Chí Minh, Việt Nam',
+    phone: '0908123456',
     services: [
-      'Bán căn hộ chung cư ở Đống Đa, Hà Nội',
-      'Bán căn hộ chung cư ở Thanh Xuân, Hà Nội',
-      'Bán căn hộ chung cư ở Cầu Giấy, Hà Nội',
-      'Bán căn hộ chung cư ở Nam Từ Liêm, Hà Nội',
-      'Bán căn hộ chung cư ở Hà Đông, Hà Nội'
+      'Bán căn hộ chung cư ở Quận 7, Hồ Chí Minh',
+      'Bán biệt thự ở Quận 7, Hồ Chí Minh',
+      'Bán đất nền dự án ở Bình Chánh',
+      'Cho thuê căn hộ chung cư ở Quận 7'
+    
     ]
   },
   {
@@ -380,15 +515,16 @@ const mockCompanies = [
   },
   {
     id: 4,
-    name: 'Công ty Cổ phần Đầu tư Địa ốc Hoàng Quân',
-    logo: '/images/companies/hoang-quan.png', // Thay bằng logo của bạn
-    address: '123 Nguyễn Văn Linh, Quận 7, Hồ Chí Minh, Việt Nam',
-    phone: '0908123456',
+    name: 'CÔNG TY CỔ PHẦN PHÚ THANH T&T',
+    logo: '/images/companies/phu-thanh.png', // Thay bằng logo của bạn
+    address: 'Lô biệt thự 28 số 35, Lê Văn Thiêm, Thanh Xuân, Hà Nội, Việt Nam',
+    phone: '0989423259',
     services: [
-      'Bán căn hộ chung cư ở Quận 7, Hồ Chí Minh',
-      'Bán biệt thự ở Quận 7, Hồ Chí Minh',
-      'Bán đất nền dự án ở Bình Chánh',
-      'Cho thuê căn hộ chung cư ở Quận 7'
+      'Bán căn hộ chung cư ở Đống Đa, Hà Nội',
+      'Bán căn hộ chung cư ở Thanh Xuân, Hà Nội',
+      'Bán căn hộ chung cư ở Cầu Giấy, Hà Nội',
+      'Bán căn hộ chung cư ở Nam Từ Liêm, Hà Nội',
+      'Bán căn hộ chung cư ở Hà Đông, Hà Nội'
     ]
   },
   {
@@ -409,7 +545,7 @@ const mockCompanies = [
 // Mock data for individuals
 const mockIndividuals = [
   {
-    id: 1,
+    id: 101,
     name: 'Phạm Công Tín',
     avatar: '/images/agents/pham-cong-tin.jpg', // Thay bằng ảnh của bạn
     address: 'Lý Nam Đế, Lâm Viên, Đà Lạt, Lâm Đồng, Việt Nam',
@@ -421,7 +557,7 @@ const mockIndividuals = [
     ]
   },
   {
-    id: 2,
+    id: 102,
     name: 'Trương Hoàng Giang',
     avatar: '/images/agents/truong-hoang-giang.jpg', // Thay bằng ảnh của bạn
     address: 'Nguyễn Từ Lực, Lâm Viên, Đà Lạt, Lâm Đồng, Việt Nam',
@@ -433,7 +569,7 @@ const mockIndividuals = [
     ]
   },
   {
-    id: 3,
+    id: 103,
     name: 'Lương Quốc Anh',
     avatar: '/images/agents/luong-quoc-anh.jpg', // Thay bằng ảnh của bạn
     address: 'Phan Chu Trinh, Lâm Viên, Đà Lạt, Lâm Đồng, Việt Nam',
@@ -444,7 +580,7 @@ const mockIndividuals = [
     ]
   },
   {
-    id: 4,
+    id: 104,
     name: 'Lý Văn Thịnh',
     avatar: '/images/agents/ly-van-thinh.jpg', // Thay bằng ảnh của bạn
     address: 'Thái Phiên, Lâm Viên, Đà Lạt, Lâm Đồng, Việt Nam',
@@ -456,7 +592,7 @@ const mockIndividuals = [
     ]
   },
   {
-    id: 5,
+    id: 105,
     name: 'Trần Vĩ Nhân',
     avatar: '/images/agents/tran-vi-nhan.jpg', // Thay bằng ảnh của bạn
     address: 'Hoàng Văn Thụ, Quận 1, Hồ Chí Minh, Việt Nam',
@@ -468,7 +604,7 @@ const mockIndividuals = [
     ]
   },
   {
-    id: 6,
+    id: 106,
     name: 'Trần Ngọc Mơ',
     avatar: '/images/agents/tran-ngoc-mo.jpg', // Thay bằng ảnh của bạn
     address: 'Nguyễn Huệ, Quận 1, Hồ Chí Minh, Việt Nam',

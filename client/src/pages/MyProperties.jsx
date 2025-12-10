@@ -25,18 +25,22 @@ function MyProperties() {
 
   const fetchMyProperties = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/properties')
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:5000/api/properties/my-properties', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch properties')
+      }
+      
       const data = await response.json()
-      
-      // Lọc các tin đăng của user hiện tại (dựa vào email)
-      const userData = JSON.parse(localStorage.getItem('user'))
-      const myProps = data.filter(prop => 
-        prop.agent && prop.agent.email === userData.email
-      )
-      
-      setProperties(myProps)
+      setProperties(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Error fetching properties:', error)
+      setProperties([])
     } finally {
       setLoading(false)
     }

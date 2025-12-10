@@ -28,28 +28,113 @@ function Projects() {
 
   useEffect(() => {
     fetchProjects()
-  }, [searchQuery])
+  }, [searchQuery, filters, sortBy])
 
   const fetchProjects = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/projects')
       console.log('Projects data:', response.data)
-      setProjects(response.data)
+      let filteredProjects = response.data
+
+      // Áp dụng bộ lọc
+      filteredProjects = applyFilters(filteredProjects)
+      
+      setProjects(filteredProjects)
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu:', error)
       // Dữ liệu mẫu nếu API chưa có
-      setProjects(mockProjects)
+      let filteredProjects = applyFilters(mockProjects)
+      setProjects(filteredProjects)
     } finally {
       setLoading(false)
     }
   }
 
+  const applyFilters = (projectsList) => {
+    let filtered = [...projectsList]
+
+    // Lọc theo tìm kiếm
+    if (searchQuery) {
+      filtered = filtered.filter(project =>
+        project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    // Lọc theo khu vực
+    if (filters.region !== 'all') {
+      filtered = filtered.filter(project => {
+        const location = project.location?.toLowerCase() || ''
+        switch (filters.region) {
+          case 'hanoi':
+            return location.includes('hà nội') || location.includes('ha noi')
+          case 'hcm':
+            return location.includes('hồ chí minh') || location.includes('sài gòn') || location.includes('saigon')
+          case 'danang':
+            return location.includes('đà nẵng') || location.includes('da nang')
+          default:
+            return true
+        }
+      })
+    }
+
+    // Lọc theo loại hình
+    if (filters.projectType !== 'all') {
+      filtered = filtered.filter(project => 
+        project.projectType === filters.projectType ||
+        project.type === filters.projectType
+      )
+    }
+
+    // Lọc theo khoảng giá
+    if (filters.priceRange !== 'all') {
+      filtered = filtered.filter(project => project.priceRange === filters.priceRange)
+    }
+
+    // Lọc theo trạng thái
+    if (filters.status !== 'all') {
+      filtered = filtered.filter(project => project.status === filters.status)
+    }
+
+    // Sắp xếp
+    switch (sortBy) {
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        break
+      case 'popular':
+        filtered.sort((a, b) => (b.views || 0) - (a.views || 0))
+        break
+      case 'price-asc':
+        filtered.sort((a, b) => (a.minPrice || 0) - (b.minPrice || 0))
+        break
+      case 'price-desc':
+        filtered.sort((a, b) => (b.minPrice || 0) - (a.minPrice || 0))
+        break
+      default:
+        break
+    }
+
+    return filtered
+  }
+
   const handleSearch = () => {
-    console.log('Tìm kiếm:', searchQuery, filters)
+    fetchProjects()
   }
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setFilters({
+      region: 'all',
+      projectType: 'all',
+      priceRange: 'all',
+      status: 'all'
+    })
+    setSortBy('newest')
   }
 
   return (
@@ -134,7 +219,7 @@ function Projects() {
               <option value="delivered">Đã bàn giao</option>
             </select>
 
-            <button className="btn-reset-filter">
+            <button className="btn-reset-filter" onClick={resetFilters} title="Xóa bộ lọc">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
               </svg>

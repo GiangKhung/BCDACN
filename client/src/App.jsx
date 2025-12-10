@@ -20,6 +20,8 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import PostProperty from './pages/PostProperty'
 import MyProperties from './pages/MyProperties'
+import Profile from './pages/Profile'
+import AgentDetail from './pages/AgentDetail'
 import './App.css'
 
 function App() {
@@ -47,6 +49,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/post-property" element={<PostProperty />} />
           <Route path="/my-properties" element={<MyProperties />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/agent/:id" element={<AgentDetail />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
         </Routes>
         <Footer />

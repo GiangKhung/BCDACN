@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Trang Chi Tiết Nhà Môi Giới</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .test-section h2 {
+            color: #e03e52;
+            margin-bottom: 1.5rem;
+            font-size: 20px;
+        }
+
+        .agent-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .agent-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .agent-card:hover {
+            border-color: #e03e52;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(224, 62, 82, 0.15);
+        }
+
+        .agent-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #f1f3f5;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .agent-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e03e52;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .verified-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #10b98115;
+            color: #10b981;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-info {
+            background: #667eea15;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .test-info h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 16px;
+        }
+
+        .test-info p {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .test-info ul {
+            margin-top: 0.5rem;
+            margin-left: 1.5rem;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .test-info li {
+            margin-bottom: 0.25rem;
+        }
+
+        .btn-test {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #e03e52;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-test:hover {
+            background: #c73545;
+            transform: translateY(-2px);
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .feature-item::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .tabs-demo {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-demo {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tab-demo.active {
+            color: #e03e52;
+        }
+
+        .tab-demo.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e03e52;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 Test Trang Chi Tiết Nhà Môi Giới</h1>
+
+        <div class="test-info">
+            <h3>📋 Hướng Dẫn Test</h3>
+            <p>Trang chi tiết nhà môi giới hiển thị đầy đủ thông tin về công ty/cá nhân môi giới bất động sản.</p>
+            <ul>
+                <li>Click vào các card bên dưới để xem chi tiết môi giới</li>
+                <li>Kiểm tra các tab: Giới thiệu, Tin đăng, Khu vực, Đánh giá</li>
+                <li>Test các nút liên hệ: Gọi điện, Gửi email, Website</li>
+                <li>Kiểm tra responsive trên mobile</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Tính Năng Chính</h2>
+            <div class="feature-list">
+                <div class="feature-item">Thông tin công ty đầy đủ</div>
+                <div class="feature-item">Logo và badge xác thực</div>
+                <div class="feature-item">Thống kê tin đăng & kinh nghiệm</div>
+                <div class="feature-item">4 tabs nội dung</div>
+                <div class="feature-item">Danh sách tin đăng</div>
+                <div class="feature-item">Khu vực hoạt động</div>
+                <div class="feature-item">Hệ thống đánh giá</div>
+                <div class="feature-item">Thông tin liên hệ</div>
+                <div class="feature-item">Responsive design</div>
+                <div class="feature-item">Loading & error states</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Demo Tabs Navigation</h2>
+            <div class="tabs-demo">
+                <button class="tab-demo active">Giới thiệu</button>
+                <button class="tab-demo">Tin đăng (156)</button>
+                <button class="tab-demo">Khu vực hoạt động</button>
+                <button class="tab-demo">Đánh giá</button>
+            </div>
+            <p style="color: #64748b; font-size: 14px; margin-top: 1rem;">
+                Tabs cho phép người dùng dễ dàng chuyển đổi giữa các phần nội dung khác nhau
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h2>🏢 Danh Sách Công Ty Môi Giới (Click để xem chi tiết)</h2>
+            <p style="color: #64748b; margin-bottom: 1rem;">ID: 1-5</p>
+            <div class="agent-list">
+                <div class="agent-card" onclick="openAgent(1)">
+                    <div class="agent-logo">🏢</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Victory Real Estate</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">10</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(2)">
+                    <div class="agent-logo">🏘️</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Hoàng Quân Real Estate</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">89</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.6</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(3)">
+                    <div class="agent-logo">🏗️</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Khang Điền Nam</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">203</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.9</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(4)">
+                    <div class="agent-logo">🏙️</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Phú Thanh T&T</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">134</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.7</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(5)">
+                    <div class="agent-logo">🏛️</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Minh Nhật</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">278</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">18</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>👤 Danh Sách Cá Nhân Môi Giới (Click để xem chi tiết)</h2>
+            <p style="color: #64748b; margin-bottom: 1rem;">ID: 101-106</p>
+            <div class="agent-list">
+                <div class="agent-card" onclick="openAgent(101)">
+                    <div class="agent-logo" style="border-radius: 50%;">👨‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Phạm Công Tín</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.7</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(102)">
+                    <div class="agent-logo" style="border-radius: 50%;">👨‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Trương Hoàng Giang</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">6</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.6</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(103)">
+                    <div class="agent-logo" style="border-radius: 50%;">👨‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Lương Quốc Anh</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">52</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(104)">
+                    <div class="agent-logo" style="border-radius: 50%;">👨‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Lý Văn Thịnh</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">41</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.5</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(105)">
+                    <div class="agent-logo" style="border-radius: 50%;">👨‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Trần Vĩ Nhân</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">67</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">9</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.9</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-card" onclick="openAgent(106)">
+                    <div class="agent-logo" style="border-radius: 50%;">👩‍💼</div>
+                    <div class="verified-badge">✓ Đã xác thực</div>
+                    <div class="agent-name">Trần Ngọc Mơ</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-value">55</div>
+                            <div class="stat-label">Tin đăng</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.7</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Test URLs - Công Ty</h2>
+            <p style="color: #64748b; margin-bottom: 1rem;">Click vào các link dưới đây để test trang chi tiết công ty:</p>
+            <a href="http://localhost:5173/agent/1" class="btn-test" target="_blank">Victory Real Estate</a>
+            <a href="http://localhost:5173/agent/2" class="btn-test" target="_blank">Hoàng Quân</a>
+            <a href="http://localhost:5173/agent/3" class="btn-test" target="_blank">Khang Điền Nam</a>
+            <a href="http://localhost:5173/agent/4" class="btn-test" target="_blank">Phú Thanh T&T</a>
+            <a href="http://localhost:5173/agent/5" class="btn-test" target="_blank">Minh Nhật</a>
+        </div>
+
+        <div class="test-section">
+            <h2>👤 Test URLs - Cá Nhân Môi Giới</h2>
+            <p style="color: #64748b; margin-bottom: 1rem;">Click vào các link dưới đây để test trang chi tiết cá nhân:</p>
+            <a href="http://localhost:5173/agent/101" class="btn-test" target="_blank">Phạm Công Tín</a>
+            <a href="http://localhost:5173/agent/102" class="btn-test" target="_blank">Trương Hoàng Giang</a>
+            <a href="http://localhost:5173/agent/103" class="btn-test" target="_blank">Lương Quốc Anh</a>
+            <a href="http://localhost:5173/agent/104" class="btn-test" target="_blank">Lý Văn Thịnh</a>
+            <a href="http://localhost:5173/agent/105" class="btn-test" target="_blank">Trần Vĩ Nhân</a>
+            <a href="http://localhost:5173/agent/106" class="btn-test" target="_blank">Trần Ngọc Mơ</a>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Cấu Trúc Dữ Liệu</h2>
+            <p style="color: #64748b; margin-bottom: 1rem;">Mỗi môi giới có cấu trúc dữ liệu như sau:</p>
+            <div class="code-block">
+{
+  "id": 1,
+  "name": "Công ty ABC",
+  "logo": "/images/companies/abc.png",
+  "address": "123 Đường XYZ, Quận 1, TP.HCM",
+  "phone": "0901234567",
+  "email": "contact@abc.com",
+  "website": "https://abc.com",
+  "verified": true,
+  "propertiesCount": 156,
+  "yearsExperience": 10,
+  "rating": 4.8,
+  "reviewsCount": 234,
+  "description": "Mô tả công ty...",
+  "services": [
+    "Mua bán nhà đất",
+    "Cho thuê bất động sản",
+    "Tư vấn đầu tư"
+  ],
+  "specialties": [
+    "Căn hộ cao cấp",
+    "Biệt thự",
+    "Nhà phố"
+  ],
+  "areas": [
+    "Bán nhà mặt phố ở Đà Lạt",
+    "Bán căn hộ ở Quận 2"
+  ]
+}
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ Checklist Test</h2>
+            <div class="feature-list">
+                <div class="feature-item">Load trang với ID hợp lệ</div>
+                <div class="feature-item">Load trang với ID không tồn tại</div>
+                <div class="feature-item">Hiển thị thông tin đầy đủ</div>
+                <div class="feature-item">Chuyển đổi giữa các tabs</div>
+                <div class="feature-item">Hiển thị danh sách tin đăng</div>
+                <div class="feature-item">Click vào tin đăng</div>
+                <div class="feature-item">Nút gọi điện hoạt động</div>
+                <div class="feature-item">Nút gửi email hoạt động</div>
+                <div class="feature-item">Link website hoạt động</div>
+                <div class="feature-item">Breadcrumb navigation</div>
+                <div class="feature-item">Loading state</div>
+                <div class="feature-item">Error handling</div>
+                <div class="feature-item">Responsive mobile</div>
+                <div class="feature-item">Hover effects</div>
+                <div class="feature-item">Badge xác thực</div>
+                <div class="feature-item">Thống kê hiển thị đúng</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Color Scheme</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div style="padding: 1rem; background: #e03e52; color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 700;">Primary</div>
+                    <div style="font-size: 12px; margin-top: 4px;">#e03e52</div>
+                </div>
+                <div style="padding: 1rem; background: #667eea; color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 700;">Secondary</div>
+                    <div style="font-size: 12px; margin-top: 4px;">#667eea</div>
+                </div>
+                <div style="padding: 1rem; background: #10b981; color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 700;">Success</div>
+                    <div style="font-size: 12px; margin-top: 4px;">#10b981</div>
+                </div>
+                <div style="padding: 1rem; background: #f8f9fa; color: #2d3748; border-radius: 8px; text-align: center; border: 1px solid #e2e8f0;">
+                    <div style="font-weight: 700;">Background</div>
+                    <div style="font-size: 12px; margin-top: 4px;">#f8f9fa</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-info" style="margin-top: 2rem;">
+            <h3>📝 Ghi Chú</h3>
+            <p>
+                Trang chi tiết nhà môi giới đã được xây dựng hoàn chỉnh với đầy đủ tính năng.
+                Hiện tại đang sử dụng dữ liệu mock, cần tích hợp API backend để lấy dữ liệu thực.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function openAgent(id) {
+            window.open(`http://localhost:5173/agent/${id}`, '_blank');
+        }
+
+        // Demo tabs interaction
+        document.querySelectorAll('.tab-demo').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-demo').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
