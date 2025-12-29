@@ -21,7 +21,9 @@ router.get('/', async (req, res) => {
         } = req.query
 
         // Xây dựng query
-        let query = {}
+        let query = {
+            approvalStatus: 'approved' // Chỉ hiển thị tin đã duyệt
+        }
 
         // Tìm kiếm theo từ khóa
         if (search) {

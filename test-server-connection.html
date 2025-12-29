@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Server Connection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border: 2px solid #e0e0e0;
+        }
+        .result.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .result.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-badge.online {
+            background: #28a745;
+            color: white;
+        }
+        .status-badge.offline {
+            background: #dc3545;
+            color: white;
+        }
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box strong {
+            color: #856404;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 5px 0;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .step {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Server Connection & Login</h1>
+        
+        <div class="info-box">
+            <strong>⚠️ Nếu gặp lỗi "Không thể kết nối server":</strong><br>
+            1. Đảm bảo server đang chạy (xem bên dưới)<br>
+            2. Xóa cache trình duyệt (Ctrl + Shift + Delete)<br>
+            3. Thử trình duyệt khác (Chrome, Firefox, Edge)<br>
+            4. Kiểm tra Console (F12) để xem lỗi chi tiết
+        </div>
+
+        <!-- Test 1: Ping Server -->
+        <div class="test-section">
+            <h3>🌐 Test 1: Kiểm tra Server</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Kiểm tra server có đang chạy không</strong>
+            </div>
+            <button onclick="testServerRoot()">▶️ Test Server Root (/)</button>
+            <button onclick="testServerAPI()">▶️ Test API Endpoint</button>
+            <div id="serverResult" class="result"></div>
+        </div>
+
+        <!-- Test 2: Test Login -->
+        <div class="test-section">
+            <h3>🔐 Test 2: Test Login API</h3>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Test đăng nhập với tài khoản admin</strong>
+            </div>
+            <input type="email" id="email" value="admin@batdongsan.com" placeholder="Email">
+            <input type="password" id="password" value="admin123456" placeholder="Password">
+            <button onclick="testLogin()">▶️ Test Login</button>
+            <button onclick="testLoginWithFetch()">▶️ Test Login (Fetch API)</button>
+            <button onclick="testLoginWithXHR()">▶️ Test Login (XMLHttpRequest)</button>
+            <div id="loginResult" class="result"></div>
+        </div>
+
+        <!-- Test 3: Token Management -->
+        <div class="test-section">
+            <h3>🎫 Test 3: Quản lý Token</h3>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Xóa token cũ và kiểm tra token mới</strong>
+            </div>
+            <button onclick="checkToken()">✓ Kiểm tra Token</button>
+            <button onclick="clearToken()">🗑️ Xóa Token</button>
+            <button onclick="clearAllStorage()">🧹 Xóa toàn bộ Storage</button>
+            <div id="tokenResult" class="result"></div>
+        </div>
+
+        <!-- Test 4: Test Admin API -->
+        <div class="test-section">
+            <h3>📊 Test 4: Test Admin API</h3>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Test các API admin (cần token)</strong>
+            </div>
+            <button onclick="testAdminStats()">📊 Test Stats API</button>
+            <button onclick="testAdminUsers()">👥 Test Users API</button>
+            <div id="adminResult" class="result"></div>
+        </div>
+
+        <!-- Test 5: Open Admin Panel -->
+        <div class="test-section">
+            <h3>🚀 Test 5: Mở Admin Panel</h3>
+            <div class="step">
+                <span class="step-number">5</span>
+                <strong>Mở trang quản trị (sau khi đăng nhập)</strong>
+            </div>
+            <button onclick="openAdmin()">🚀 Mở Admin Panel</button>
+            <button onclick="openLogin()">🔑 Mở trang Login</button>
+            <button onclick="openHome()">🏠 Mở trang Home</button>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = 'http://localhost:5000'
+        const CLIENT_URL = 'http://localhost:3000'
+
+        // Test Server Root
+        async function testServerRoot() {
+            const resultDiv = document.getElementById('serverResult')
+            resultDiv.textContent = '⏳ Đang kiểm tra server...'
+            resultDiv.className = 'result'
+            
+            try {
+                console.log('Testing server root:', SERVER_URL)
+                const response = await fetch(SERVER_URL, {
+                    method: 'GET',
+                    mode: 'cors'
+                })
+                
+                console.log('Response status:', response.status)
+                const data = await response.json()
+                console.log('Response data:', data)
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Server đang hoạt động!<span class="status-badge online">ONLINE</span>\n\n` +
+                        `URL: ${SERVER_URL}\n` +
+                        `Status: ${response.status} ${response.statusText}\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Server trả về lỗi ${response.status}`
+                }
+            } catch (error) {
+                console.error('Server test error:', error)
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ KHÔNG THỂ KẾT NỐI SERVER!\n\n` +
+                    `Error: ${error.message}\n` +
+                    `Type: ${error.name}\n\n` +
+                    `Nguyên nhân có thể:\n` +
+                    `1. Server chưa chạy (chạy: .\\start-all.bat)\n` +
+                    `2. Port 5000 bị chặn bởi firewall\n` +
+                    `3. CORS issue\n` +
+                    `4. Network error\n\n` +
+                    `Kiểm tra Console (F12) để xem chi tiết`
+            }
+        }
+
+        // Test Server API
+        async function testServerAPI() {
+            const resultDiv = document.getElementById('serverResult')
+            resultDiv.textContent = '⏳ Đang test API endpoint...'
+            resultDiv.className = 'result'
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/properties?page=1&limit=5`)
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ API hoạt động bình thường!\n\n` +
+                        `Endpoint: /api/properties\n` +
+                        `Status: ${response.status}\n` +
+                        `Total properties: ${data.total || 0}\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2).substring(0, 500)}...`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ API lỗi: ${response.status}`
+                }
+            } catch (error) {
+                console.error('API test error:', error)
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi: ${error.message}`
+            }
+        }
+
+        // Test Login
+        async function testLogin() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('loginResult')
+            
+            resultDiv.textContent = '⏳ Đang đăng nhập...'
+            resultDiv.className = 'result'
+            
+            try {
+                console.log('Login attempt:', { email, password: '***' })
+                
+                const response = await fetch(`${SERVER_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                
+                console.log('Login response status:', response.status)
+                const data = await response.json()
+                console.log('Login response data:', data)
+                
+                if (response.ok && data.token) {
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                    
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ ĐĂNG NHẬP THÀNH CÔNG!\n\n` +
+                        `👤 User: ${data.user.name}\n` +
+                        `📧 Email: ${data.user.email}\n` +
+                        `🎭 Role: ${data.user.role}\n` +
+                        `🔑 Token: ${data.token.substring(0, 50)}...\n\n` +
+                        `✓ Token đã lưu vào localStorage\n` +
+                        `✓ Bây giờ có thể test Admin API\n` +
+                        `✓ Hoặc mở Admin Panel`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Đăng nhập thất bại!\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Message: ${data.message || 'Unknown error'}\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                console.error('Login error:', error)
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ LỖI KẾT NỐI!\n\n` +
+                    `Error: ${error.message}\n` +
+                    `Type: ${error.name}\n\n` +
+                    `Server URL: ${SERVER_URL}/api/auth/login\n\n` +
+                    `Kiểm tra:\n` +
+                    `1. Server có đang chạy?\n` +
+                    `2. URL có đúng không?\n` +
+                    `3. CORS có được bật?\n` +
+                    `4. Xem Console (F12) để biết chi tiết`
+            }
+        }
+
+        // Test Login with Fetch (alternative)
+        async function testLoginWithFetch() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('loginResult')
+            
+            resultDiv.textContent = '⏳ Đang test login với Fetch API...'
+            resultDiv.className = 'result'
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/auth/login`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok && data.token) {
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                    
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Login thành công (Fetch API)!\n\n` +
+                        JSON.stringify(data, null, 2)
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Login thất bại!\n\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi: ${error.message}`
+            }
+        }
+
+        // Test Login with XMLHttpRequest
+        function testLoginWithXHR() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('loginResult')
+            
+            resultDiv.textContent = '⏳ Đang test login với XMLHttpRequest...'
+            resultDiv.className = 'result'
+            
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', `${SERVER_URL}/api/auth/login`, true)
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            
+            xhr.onload = function() {
+                try {
+                    const data = JSON.parse(xhr.responseText)
+                    
+                    if (xhr.status === 200 && data.token) {
+                        localStorage.setItem('token', data.token)
+                        localStorage.setItem('user', JSON.stringify(data.user))
+                        
+                        resultDiv.className = 'result success'
+                        resultDiv.textContent = `✅ Login thành công (XHR)!\n\n` +
+                            JSON.stringify(data, null, 2)
+                    } else {
+                        resultDiv.className = 'result error'
+                        resultDiv.textContent = `❌ Login thất bại!\n\nStatus: ${xhr.status}\n\n${JSON.stringify(data, null, 2)}`
+                    }
+                } catch (e) {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Parse error: ${e.message}\n\nResponse: ${xhr.responseText}`
+                }
+            }
+            
+            xhr.onerror = function() {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Network error!\n\nKhông thể kết nối đến server`
+            }
+            
+            xhr.send(JSON.stringify({ email, password }))
+        }
+
+        // Check Token
+        function checkToken() {
+            const token = localStorage.getItem('token')
+            const user = localStorage.getItem('user')
+            const resultDiv = document.getElementById('tokenResult')
+            
+            if (token) {
+                try {
+                    const userData = JSON.parse(user)
+                    resultDiv.className = 'result info'
+                    resultDiv.textContent = `ℹ️ Token hiện tại:\n\n` +
+                        `👤 User: ${userData.name}\n` +
+                        `📧 Email: ${userData.email}\n` +
+                        `🎭 Role: ${userData.role}\n\n` +
+                        `🔑 Token:\n${token}\n\n` +
+                        `Token length: ${token.length} characters`
+                } catch (e) {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Token không hợp lệ!\n\n${token}`
+                }
+            } else {
+                resultDiv.className = 'result info'
+                resultDiv.textContent = 'ℹ️ Chưa có token trong localStorage'
+            }
+        }
+
+        // Clear Token
+        function clearToken() {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            const resultDiv = document.getElementById('tokenResult')
+            resultDiv.className = 'result success'
+            resultDiv.textContent = '✅ Đã xóa token!\n\nBây giờ hãy đăng nhập lại'
+        }
+
+        // Clear All Storage
+        function clearAllStorage() {
+            localStorage.clear()
+            sessionStorage.clear()
+            const resultDiv = document.getElementById('tokenResult')
+            resultDiv.className = 'result success'
+            resultDiv.textContent = '✅ Đã xóa toàn bộ storage!\n\nlocalStorage và sessionStorage đã được xóa'
+        }
+
+        // Test Admin Stats
+        async function testAdminStats() {
+            const token = localStorage.getItem('token')
+            const resultDiv = document.getElementById('adminResult')
+            
+            if (!token) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = '❌ Chưa có token! Vui lòng đăng nhập trước'
+                return
+            }
+            
+            resultDiv.textContent = '⏳ Đang test Admin Stats API...'
+            resultDiv.className = 'result'
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/admin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Admin Stats API hoạt động!\n\n` +
+                        JSON.stringify(data, null, 2)
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Lỗi ${response.status}: ${data.message}\n\n` +
+                        `Token có thể đã hết hạn. Hãy đăng nhập lại!`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi: ${error.message}`
+            }
+        }
+
+        // Test Admin Users
+        async function testAdminUsers() {
+            const token = localStorage.getItem('token')
+            const resultDiv = document.getElementById('adminResult')
+            
+            if (!token) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = '❌ Chưa có token! Vui lòng đăng nhập trước'
+                return
+            }
+            
+            resultDiv.textContent = '⏳ Đang test Admin Users API...'
+            resultDiv.className = 'result'
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/admin/users?page=1&limit=5`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Admin Users API hoạt động!\n\n` +
+                        `Total: ${data.total}\n` +
+                        `Page: ${data.page}/${data.pages}\n\n` +
+                        JSON.stringify(data.users, null, 2)
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Lỗi ${response.status}: ${data.message}\n\n` +
+                        `Token có thể đã hết hạn. Hãy đăng nhập lại!`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi: ${error.message}`
+            }
+        }
+
+        // Open Admin Panel
+        function openAdmin() {
+            const token = localStorage.getItem('token')
+            if (!token) {
+                alert('⚠️ Chưa có token! Vui lòng đăng nhập trước')
+                return
+            }
+            window.open(`${CLIENT_URL}/admin`, '_blank')
+        }
+
+        // Open Login
+        function openLogin() {
+            window.open(`${CLIENT_URL}/login`, '_blank')
+        }
+
+        // Open Home
+        function openHome() {
+            window.open(CLIENT_URL, '_blank')
+        }
+
+        // Auto check on load
+        window.onload = function() {
+            console.log('Page loaded. Testing server...')
+            testServerRoot()
+            checkToken()
+        }
+    </script>
+</body>
+</html>

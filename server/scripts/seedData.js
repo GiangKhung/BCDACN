@@ -10,9 +10,16 @@ dotenv.config()
 
 const seedData = async () => {
     try {
-        // Mongoose 8 tự động xử lý SSL/TLS
-        await mongoose.connect(process.env.MONGODB_URI)
+        console.log('🔍 Đang kết nối MongoDB...')
+        console.log('📍 URI:', process.env.MONGODB_URI?.replace(/:[^:@]+@/, ':****@'))
+
+        // Mongoose 8 với timeout settings
+        await mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 10000, // 10 giây
+            socketTimeoutMS: 45000,
+        })
         console.log('✅ MongoDB đã kết nối')
+        console.log('📊 Database:', mongoose.connection.name)
 
         // Xóa dữ liệu cũ
         console.log('\n🗑️  Đang xóa dữ liệu cũ...')
@@ -44,7 +51,16 @@ const seedData = async () => {
         console.log('\n🎉 Hoàn thành seed dữ liệu!')
         process.exit()
     } catch (error) {
-        console.error('\n❌ Lỗi:', error)
+        console.error('\n❌ Lỗi:', error.message)
+
+        if (error.message.includes('ETIMEOUT') || error.message.includes('querySrv')) {
+            console.error('\n💡 Giải pháp:')
+            console.error('   1. Kiểm tra IP whitelist trên MongoDB Atlas')
+            console.error('   2. Network Access → Add IP Address → 0.0.0.0/0')
+            console.error('   3. Hoặc dùng MongoDB local (xem FIX-MONGODB-TIMEOUT.md)')
+            console.error('\n   📖 Chi tiết: FIX-MONGODB-TIMEOUT.md')
+        }
+
         process.exit(1)
     }
 }

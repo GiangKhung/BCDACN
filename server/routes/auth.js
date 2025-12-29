@@ -6,7 +6,7 @@ const router = express.Router()
 
 // Tạo JWT token
 const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'your-secret-key', {
+    return jwt.sign({ userId: userId }, process.env.JWT_SECRET || 'your-secret-key', {
         expiresIn: '30d'
     })
 }
@@ -105,16 +105,14 @@ router.post('/login', async (req, res) => {
         res.json({
             success: true,
             message: 'Đăng nhập thành công',
-            data: {
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone,
-                    avatar: user.avatar,
-                    role: user.role
-                },
-                token
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                avatar: user.avatar,
+                role: user.role
             }
         })
     } catch (error) {

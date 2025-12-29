@@ -29,16 +29,22 @@ function Login() {
 
       const data = await response.json()
 
-      if (data.success) {
+      if (response.ok && data.token) {
         // Lưu token và thông tin user
-        localStorage.setItem('token', data.data.token)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
         
         // Dispatch event để Header cập nhật
         window.dispatchEvent(new Event('userLoggedIn'))
         
         alert('Đăng nhập thành công!')
-        navigate('/')
+        
+        // Nếu là admin, chuyển đến trang admin
+        if (data.user.role === 'admin') {
+          navigate('/admin')
+        } else {
+          navigate('/')
+        }
       } else {
         setError(data.message || 'Đăng nhập thất bại')
       }

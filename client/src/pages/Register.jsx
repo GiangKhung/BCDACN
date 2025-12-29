@@ -64,10 +64,10 @@ function Register() {
 
       const data = await response.json()
 
-      if (data.success) {
+      if (response.ok && data.token) {
         // Lưu token và thông tin user
-        localStorage.setItem('token', data.data.token)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
         
         // Dispatch event để Header cập nhật
         window.dispatchEvent(new Event('userLoggedIn'))

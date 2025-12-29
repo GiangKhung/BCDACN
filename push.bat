@@ -32,26 +32,24 @@ echo [4/6] Kiem tra remote...
 git remote -v
 
 echo.
-echo [5/6] Kiem tra branch...
-git branch -r | findstr "origin/main" >nul 2>&1
-if errorlevel 1 (
-    git branch -r | findstr "origin/master" >nul 2>&1
-    if errorlevel 1 (
-        echo Repository trong hoac chua co branch. Se tao branch moi...
-        set BRANCH=main
-        set FIRST_PUSH=1
-    ) else (
-        echo Branch chinh la 'master'
-        set BRANCH=master
-        set FIRST_PUSH=0
-    )
-) else (
-    echo Branch chinh la 'main'
-    set BRANCH=main
-    set FIRST_PUSH=0
-)
+echo [5/6] Kiem tra branch local va remote...
 
-echo Dang su dung branch: %BRANCH%
+REM Lay branch hien tai
+for /f "tokens=*" %%i in ('git branch --show-current') do set LOCAL_BRANCH=%%i
+echo Branch local: %LOCAL_BRANCH%
+
+REM Kiem tra branch tren remote
+git ls-remote --heads origin %LOCAL_BRANCH% >nul 2>&1
+if errorlevel 1 (
+    echo Branch '%LOCAL_BRANCH%' chua ton tai tren remote.
+    echo Se tao branch moi khi push...
+    set FIRST_PUSH=1
+    set BRANCH=%LOCAL_BRANCH%
+) else (
+    echo Branch '%LOCAL_BRANCH%' da ton tai tren remote.
+    set FIRST_PUSH=0
+    set BRANCH=%LOCAL_BRANCH%
+)
 
 if "%FIRST_PUSH%"=="0" (
     echo.
@@ -68,8 +66,7 @@ if "%FIRST_PUSH%"=="0" (
 echo.
 echo [6/6] Push code len GitHub...
 if "%FIRST_PUSH%"=="1" (
-    echo Lan dau push, dang tao branch %BRANCH%...
-    git branch -M %BRANCH%
+    echo Lan dau push branch %BRANCH%...
     git push -u origin %BRANCH%
 ) else (
     git push origin %BRANCH%

@@ -22,6 +22,7 @@ import PostProperty from './pages/PostProperty'
 import MyProperties from './pages/MyProperties'
 import Profile from './pages/Profile'
 import AgentDetail from './pages/AgentDetail'
+import Admin from './pages/Admin'
 import './App.css'
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/agent/:id" element={<AgentDetail />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
         <Footer />
       </div>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Login & API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.success:hover {
+            background: #218838;
+        }
+        button.info {
+            background: #17a2b8;
+        }
+        button.info:hover {
+            background: #138496;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        .result.info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 5px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test Admin Login & API</h1>
+        
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📝 Hướng dẫn sử dụng</h3>
+            <ol>
+                <li><strong>Xóa token cũ:</strong> Click "🗑️ Xóa Token" để xóa token cũ (không hợp lệ)</li>
+                <li><strong>Đăng nhập lại:</strong> Click "🔑 Đăng nhập" để lấy token mới</li>
+                <li><strong>Test Admin API:</strong> Sau khi đăng nhập, test các API admin</li>
+                <li><strong>Vào trang Admin:</strong> Click "🚀 Mở Admin Panel" để vào http://localhost:3000/admin</li>
+            </ol>
+            <p><strong>⚠️ Lưu ý:</strong> Token cũ không hợp lệ sau khi sửa code. Phải đăng nhập lại!</p>
+        </div>
+
+        <!-- Section 1: Server Status -->
+        <div class="section">
+            <h2>🌐 Kiểm tra Server</h2>
+            <button class="info" onclick="checkServer()">🔍 Kiểm tra kết nối</button>
+            <div id="serverStatus"></div>
+        </div>
+
+        <!-- Section 2: Login -->
+        <div class="section">
+            <h2>1️⃣ Đăng nhập</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="email" value="admin@batdongsan.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="password" value="admin123456">
+            </div>
+            
+            <button onclick="login()">🔑 Đăng nhập</button>
+            <button class="danger" onclick="clearToken()">🗑️ Xóa Token</button>
+            <button class="success" onclick="checkToken()">✓ Kiểm tra Token</button>
+            <button class="info" onclick="openAdmin()">🚀 Mở Admin Panel</button>
+            
+            <div id="loginResult"></div>
+        </div>
+
+        <!-- Section 3: Test Admin API -->
+        <div class="section">
+            <h2>2️⃣ Test Admin API</h2>
+            <button onclick="testAdminStats()">📊 Lấy thống kê</button>
+            <button onclick="testAdminUsers()">👥 Danh sách Users</button>
+            <button onclick="testAdminProperties()">🏠 Danh sách Properties</button>
+            
+            <div id="adminResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000'
+        const CLIENT_URL = 'http://localhost:3000'
+        
+        // Check server on load
+        window.onload = function() {
+            checkServer()
+            checkToken()
+        }
+
+        async function checkServer() {
+            const resultDiv = document.getElementById('serverStatus')
+            
+            try {
+                resultDiv.innerHTML = '⏳ Đang kiểm tra...'
+                
+                const response = await fetch(`${API_URL}/`, {
+                    method: 'GET'
+                })
+                
+                if (response.ok) {
+                    const data = await response.json()
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `✅ Server đang hoạt động!<span class="status online">ONLINE</span>\n\n` +
+                        `URL: ${API_URL}\n` +
+                        `Message: ${data.message}\n\n` +
+                        `Endpoints:\n${JSON.stringify(data.endpoints, null, 2)}`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `❌ Server trả về lỗi ${response.status}<span class="status offline">ERROR</span>`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `❌ Không thể kết nối server!<span class="status offline">OFFLINE</span>\n\n` +
+                    `Error: ${error.message}\n\n` +
+                    `Đảm bảo server đang chạy tại: ${API_URL}\n` +
+                    `Chạy lệnh: .\\start-all.bat`
+            }
+        }
+        
+        async function login() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('loginResult')
+            
+            try {
+                resultDiv.textContent = '⏳ Đang đăng nhập...'
+                resultDiv.className = 'result'
+                
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok && data.token) {
+                    // Lưu token
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                    
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Đăng nhập thành công!\n\n` +
+                        `👤 User: ${data.user.name}\n` +
+                        `📧 Email: ${data.user.email}\n` +
+                        `🎭 Role: ${data.user.role}\n` +
+                        `🔑 Token: ${data.token.substring(0, 60)}...\n\n` +
+                        `✓ Token đã được lưu vào localStorage\n` +
+                        `✓ Bây giờ bạn có thể test Admin API bên dưới\n` +
+                        `✓ Hoặc click "🚀 Mở Admin Panel" để vào trang quản trị`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Đăng nhập thất bại!\n\n` +
+                        `Error: ${data.message || 'Unknown error'}\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi kết nối!\n\n` +
+                    `Error: ${error.message}\n\n` +
+                    `Đảm bảo server đang chạy tại: ${API_URL}`
+            }
+        }
+        
+        function clearToken() {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            const resultDiv = document.getElementById('loginResult')
+            resultDiv.className = 'result success'
+            resultDiv.textContent = '✅ Đã xóa token khỏi localStorage!\n\n' +
+                'Token cũ đã bị xóa. Bây giờ hãy đăng nhập lại để lấy token mới.'
+        }
+        
+        function checkToken() {
+            const token = localStorage.getItem('token')
+            const user = localStorage.getItem('user')
+            const resultDiv = document.getElementById('loginResult')
+            
+            if (token) {
+                try {
+                    const userData = JSON.parse(user)
+                    resultDiv.className = 'result info'
+                    resultDiv.textContent = `ℹ️ Đã tìm thấy token trong localStorage\n\n` +
+                        `👤 User: ${userData.name || 'N/A'}\n` +
+                        `📧 Email: ${userData.email || 'N/A'}\n` +
+                        `🎭 Role: ${userData.role || 'N/A'}\n` +
+                        `🔑 Token: ${token.substring(0, 60)}...\n\n` +
+                        `⚠️ Nếu gặp lỗi 401 khi test Admin API:\n` +
+                        `   → Token cũ không hợp lệ\n` +
+                        `   → Hãy xóa token và đăng nhập lại`
+                } catch (e) {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Token không hợp lệ!\n\n` +
+                        `Hãy xóa token và đăng nhập lại`
+                }
+            } else {
+                resultDiv.className = 'result info'
+                resultDiv.textContent = 'ℹ️ Chưa có token trong localStorage\n\n' +
+                    'Vui lòng đăng nhập để lấy token mới'
+            }
+        }
+
+        function openAdmin() {
+            const token = localStorage.getItem('token')
+            if (!token) {
+                alert('⚠️ Chưa có token! Vui lòng đăng nhập trước')
+                return
+            }
+            window.open(`${CLIENT_URL}/admin`, '_blank')
+        }
+
+        async function testAdminStats() {
+            const resultDiv = document.getElementById('adminResult')
+            const token = localStorage.getItem('token')
+            
+            if (!token) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = '❌ Chưa có token! Vui lòng đăng nhập trước'
+                return
+            }
+            
+            try {
+                resultDiv.textContent = '⏳ Đang lấy thống kê...'
+                resultDiv.className = 'result'
+                
+                const response = await fetch(`${API_URL}/api/admin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Lấy thống kê thành công!\n\n` +
+                        `📊 Thống kê hệ thống:\n\n` +
+                        JSON.stringify(data, null, 2)
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Lỗi ${response.status}: ${data.message || 'Không thể lấy thống kê'}\n\n` +
+                        `⚠️ Token có thể đã hết hạn hoặc không hợp lệ\n` +
+                        `→ Hãy xóa token và đăng nhập lại!\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi kết nối: ${error.message}`
+            }
+        }
+
+        async function testAdminUsers() {
+            const resultDiv = document.getElementById('adminResult')
+            const token = localStorage.getItem('token')
+            
+            if (!token) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = '❌ Chưa có token! Vui lòng đăng nhập trước'
+                return
+            }
+            
+            try {
+                resultDiv.textContent = '⏳ Đang lấy danh sách users...'
+                resultDiv.className = 'result'
+                
+                const response = await fetch(`${API_URL}/api/admin/users?page=1&limit=10`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Lấy danh sách users thành công!\n\n` +
+                        `👥 Tổng số users: ${data.total}\n` +
+                        `📄 Trang: ${data.page}/${data.pages}\n\n` +
+                        `Danh sách:\n${JSON.stringify(data.users, null, 2)}`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Lỗi ${response.status}: ${data.message || 'Không thể lấy danh sách users'}\n\n` +
+                        `⚠️ Token có thể đã hết hạn hoặc không hợp lệ\n` +
+                        `→ Hãy xóa token và đăng nhập lại!\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi kết nối: ${error.message}`
+            }
+        }
+
+        async function testAdminProperties() {
+            const resultDiv = document.getElementById('adminResult')
+            const token = localStorage.getItem('token')
+            
+            if (!token) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = '❌ Chưa có token! Vui lòng đăng nhập trước'
+                return
+            }
+            
+            try {
+                resultDiv.textContent = '⏳ Đang lấy danh sách properties...'
+                resultDiv.className = 'result'
+                
+                const response = await fetch(`${API_URL}/api/admin/properties?page=1&limit=10`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success'
+                    resultDiv.textContent = `✅ Lấy danh sách properties thành công!\n\n` +
+                        `🏠 Tổng số properties: ${data.total}\n` +
+                        `📄 Trang: ${data.page}/${data.pages}\n\n` +
+                        `Danh sách:\n${JSON.stringify(data.properties, null, 2)}`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.textContent = `❌ Lỗi ${response.status}: ${data.message || 'Không thể lấy danh sách properties'}\n\n` +
+                        `⚠️ Token có thể đã hết hạn hoặc không hợp lệ\n` +
+                        `→ Hãy xóa token và đăng nhập lại!\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.textContent = `❌ Lỗi kết nối: ${error.message}`
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h2>🔐 Test Login Admin</h2>
+    
+    <input type="email" id="email" value="admin@batdongsan.com" placeholder="Email">
+    <input type="password" id="password" value="admin123456" placeholder="Password">
+    <button onclick="login()">Đăng Nhập</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('result')
+
+            resultDiv.innerHTML = 'Đang đăng nhập...'
+
+            try {
+                console.log('Sending login request...')
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                })
+
+                console.log('Response status:', response.status)
+                const data = await response.json()
+                console.log('Response data:', data)
+
+                if (response.ok && data.token) {
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                    
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `
+                        <strong>✅ Đăng nhập thành công!</strong><br><br>
+                        <strong>User:</strong> ${data.user?.name || 'N/A'}<br>
+                        <strong>Email:</strong> ${data.user?.email || 'N/A'}<br>
+                        <strong>Role:</strong> ${data.user?.role || 'N/A'}<br>
+                        <strong>Token:</strong> ${data.token.substring(0, 30)}...<br><br>
+                        <button onclick="window.open('http://localhost:5173/admin', '_blank')">
+                            Vào Trang Admin
+                        </button>
+                    `
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<strong>❌ Lỗi:</strong> ${data.message || 'Unknown error'}`
+                }
+            } catch (error) {
+                console.error('Login error:', error)
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `
+                    <strong>❌ Lỗi kết nối:</strong> ${error.message}<br><br>
+                    <strong>Kiểm tra:</strong><br>
+                    1. Server có đang chạy? (http://localhost:5000)<br>
+                    2. CORS có được bật?<br>
+                    3. Xem Console (F12) để biết chi tiết
+                `
+            }
+        }
+    </script>
+</body>
+</html>

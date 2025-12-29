@@ -5,6 +5,7 @@ import connectDB from './config/database.js'
 import propertiesRouter from './routes/properties.js'
 import projectsRouter from './routes/projects.js'
 import authRouter from './routes/auth.js'
+import adminRouter from './routes/admin.js'
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }))
 app.use('/api/properties', propertiesRouter)
 app.use('/api/projects', projectsRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/admin', adminRouter)
 
 app.get('/', (req, res) => {
     res.json({
@@ -30,7 +32,8 @@ app.get('/', (req, res) => {
         endpoints: {
             properties: '/api/properties',
             projects: '/api/projects',
-            auth: '/api/auth'
+            auth: '/api/auth',
+            admin: '/api/admin'
         }
     })
 })

@@ -134,6 +134,22 @@ const propertySchema = new mongoose.Schema({
         enum: ['available', 'pending', 'sold', 'rented'],
         default: 'available'
     },
+    // Trạng thái duyệt bài
+    approvalStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    },
+    rejectionReason: {
+        type: String
+    },
+    approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    approvedAt: {
+        type: Date
+    },
     // Thông tin người đăng
     userId: {
         type: mongoose.Schema.Types.ObjectId,
