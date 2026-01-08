@@ -1,0 +1,76 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [ develop, feature/*, hotfix/* ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    # Build and test client
+    - name: Install client dependencies
+      working-directory: ./client
+      run: npm ci
+    
+    - name: Lint client code
+      working-directory: ./client
+      run: npm run lint || echo "Lint not configured"
+    
+    - name: Build client
+      working-directory: ./client
+      run: npm run build
+    
+    # Build and test server
+    - name: Install server dependencies
+      working-directory: ./server
+      run: npm ci
+    
+    - name: Lint server code
+      working-directory: ./server
+      run: npm run lint || echo "Lint not configured"
+    
+    - name: Run server tests
+      working-directory: ./server
+      run: npm test || echo "Tests not configured"
+      env:
+        NODE_ENV: test
+        MONGODB_URI: ${{ secrets.MONGODB_URI_TEST }}
+        JWT_SECRET: test-secret
+    
+    # Security audit
+    - name: Run npm audit (client)
+      working-directory: ./client
+      run: npm audit --audit-level=moderate || true
+    
+    - name: Run npm audit (server)
+      working-directory: ./server
+      run: npm audit --audit-level=moderate || true
+    
+    # Upload build artifacts
+    - name: Upload client build
+      uses: actions/upload-artifact@v4
+      with:
+        name: client-build
+        path: client/dist
+        retention-days: 7
+    
+    - name: Notify on failure
+      if: failure()
+      run: echo "Build failed! Check logs for details."

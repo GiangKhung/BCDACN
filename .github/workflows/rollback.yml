@@ -1,0 +1,109 @@
+name: Rollback Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to rollback to'
+        required: true
+      reason:
+        description: 'Reason for rollback'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - name: Confirm rollback
+      run: |
+        echo "Rolling back to version: ${{ github.event.inputs.version }}"
+        echo "Reason: ${{ github.event.inputs.reason }}"
+    
+    - name: Notify team - Rollback started
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        custom_payload: |
+          {
+            text: "🔄 Production Rollback Started",
+            attachments: [{
+              color: 'warning',
+              text: "Version: ${{ github.event.inputs.version }}\nReason: ${{ github.event.inputs.reason }}\nInitiated by: ${{ github.actor }}"
+            }]
+          }
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Backup current state
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USERNAME }}
+        key: ${{ secrets.PROD_SSH_KEY }}
+        script: |
+          cd /var/www/real-estate-prod
+          docker-compose exec -T mongodb mongodump --out /backup/pre-rollback-$(date +%Y%m%d-%H%M%S)
+    
+    - name: Rollback to previous version
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USERNAME }}
+        key: ${{ secrets.PROD_SSH_KEY }}
+        script: |
+          cd /var/www/real-estate-prod
+          
+          # Stop current containers
+          docker-compose down
+          
+          # Pull specific version
+          docker pull ${{ secrets.DOCKER_USERNAME }}/real-estate-client:${{ github.event.inputs.version }}
+          docker pull ${{ secrets.DOCKER_USERNAME }}/real-estate-server:${{ github.event.inputs.version }}
+          
+          # Update docker-compose to use specific version
+          export VERSION=${{ github.event.inputs.version }}
+          docker-compose up -d
+          
+          # Wait for services to start
+          sleep 30
+    
+    - name: Health check after rollback
+      run: |
+        sleep 30
+        if curl -f ${{ secrets.PROD_URL }}/api; then
+          echo "Rollback successful - services are healthy"
+        else
+          echo "Rollback failed - services are not responding"
+          exit 1
+        fi
+    
+    - name: Notify team - Rollback completed
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        custom_payload: |
+          {
+            text: "✅ Production Rollback Completed",
+            attachments: [{
+              color: 'good',
+              text: "Successfully rolled back to version: ${{ github.event.inputs.version }}\nServices are healthy and running."
+            }]
+          }
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Notify team - Rollback failed
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        custom_payload: |
+          {
+            text: "❌ Production Rollback Failed!",
+            attachments: [{
+              color: 'danger',
+              text: "Failed to rollback to version: ${{ github.event.inputs.version }}\nImmediate action required!"
+            }]
+          }
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
