@@ -23,6 +23,11 @@ import MyProperties from './pages/MyProperties'
 import Profile from './pages/Profile'
 import AgentDetail from './pages/AgentDetail'
 import Admin from './pages/Admin'
+import Payment from './pages/Payment'
+import MyPayments from './pages/MyPayments'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminPayments from './pages/AdminPayments'
+import AdminRemovalRequests from './pages/AdminRemovalRequests'
 import './App.css'
 
 function App() {
@@ -54,6 +59,11 @@ function App() {
           <Route path="/agent/:id" element={<AgentDetail />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/payment/:propertyId" element={<Payment />} />
+          <Route path="/my-payments" element={<MyPayments />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/payments" element={<AdminPayments />} />
+          <Route path="/admin/removal-requests" element={<AdminRemovalRequests />} />
         </Routes>
         <Footer />
       </div>

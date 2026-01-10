@@ -20,7 +20,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function () {
+            // Password chỉ bắt buộc nếu không đăng nhập bằng OAuth
+            return !this.googleId
+        },
         minlength: 6
     },
     avatar: {
@@ -31,6 +34,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'agent', 'admin'],
         default: 'user'
+    },
+    // OAuth fields
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true // Cho phép null và unique
+    },
+    authProvider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local'
     },
     savedProperties: [{
         type: mongoose.Schema.Types.ObjectId,

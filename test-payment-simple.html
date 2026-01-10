@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Payment Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Payment System - Simple</h1>
+
+    <!-- Step 1: Login -->
+    <div class="section">
+        <h2>1. Đăng Nhập</h2>
+        <input type="email" id="email" placeholder="Email" value="admin@example.com">
+        <input type="password" id="password" placeholder="Password" value="admin123">
+        <button onclick="login()">Đăng Nhập</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <!-- Step 2: Get Properties -->
+    <div class="section">
+        <h2>2. Lấy Danh Sách Properties</h2>
+        <button onclick="getProperties()">Lấy Properties</button>
+        <div id="propertiesResult"></div>
+    </div>
+
+    <!-- Step 3: Create Payment -->
+    <div class="section">
+        <h2>3. Tạo Payment</h2>
+        <input type="text" id="propertyId" placeholder="Property ID">
+        <input type="number" id="durationDays" placeholder="Duration (days)" value="30" min="30">
+        <select id="paymentMethod">
+            <option value="bank_transfer">Chuyển khoản ngân hàng</option>
+            <option value="sepay_qr">SePay QR</option>
+        </select>
+        <button onclick="createPayment()">Tạo Payment</button>
+        <div id="paymentResult"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api'
+        let token = localStorage.getItem('token')
+
+        async function login() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('loginResult')
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                })
+
+                const data = await response.json()
+                
+                if (data.token) {
+                    token = data.token
+                    localStorage.setItem('token', token)
+                    resultDiv.className = 'result'
+                    resultDiv.innerHTML = `<strong>✅ Success!</strong><pre>${JSON.stringify(data, null, 2)}</pre>`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${JSON.stringify(data, null, 2)}</pre>`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${error.message}</pre>`
+            }
+        }
+
+        async function getProperties() {
+            const resultDiv = document.getElementById('propertiesResult')
+
+            try {
+                const response = await fetch(`${API_URL}/properties`)
+                const data = await response.json()
+                
+                if (Array.isArray(data)) {
+                    resultDiv.className = 'result'
+                    resultDiv.innerHTML = `<strong>✅ Found ${data.length} properties</strong><br>`
+                    
+                    // Show first 5 properties
+                    data.slice(0, 5).forEach(prop => {
+                        resultDiv.innerHTML += `
+                            <div style="margin: 10px 0; padding: 10px; background: #e8f5e9;">
+                                <strong>ID:</strong> ${prop._id}<br>
+                                <strong>Title:</strong> ${prop.title}<br>
+                                <button onclick="document.getElementById('propertyId').value='${prop._id}'">Use This ID</button>
+                            </div>
+                        `
+                    })
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${JSON.stringify(data, null, 2)}</pre>`
+                }
+            } catch (error) {
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${error.message}</pre>`
+            }
+        }
+
+        async function createPayment() {
+            if (!token) {
+                alert('Please login first!')
+                return
+            }
+
+            const propertyId = document.getElementById('propertyId').value
+            const durationDays = parseInt(document.getElementById('durationDays').value)
+            const paymentMethod = document.getElementById('paymentMethod').value
+            const resultDiv = document.getElementById('paymentResult')
+
+            if (!propertyId) {
+                alert('Please enter Property ID')
+                return
+            }
+
+            resultDiv.innerHTML = '<p>⏳ Creating payment...</p>'
+
+            try {
+                console.log('Sending request:', { propertyId, durationDays, paymentMethod })
+                
+                const response = await fetch(`${API_URL}/payment/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ propertyId, durationDays, paymentMethod })
+                })
+
+                console.log('Response status:', response.status)
+                
+                const data = await response.json()
+                console.log('Response data:', data)
+                
+                if (data.success) {
+                    resultDiv.className = 'result'
+                    resultDiv.innerHTML = `<strong>✅ Payment Created!</strong><pre>${JSON.stringify(data, null, 2)}</pre>`
+                    
+                    // Show QR if available
+                    if (data.data.sepayInfo && data.data.sepayInfo.qrCodeUrl) {
+                        resultDiv.innerHTML += `
+                            <div style="text-align: center; margin-top: 20px;">
+                                <h3>QR Code:</h3>
+                                <img src="${data.data.sepayInfo.qrCodeUrl}" style="max-width: 300px; border: 2px solid #4CAF50;">
+                                <p><strong>Transfer Content:</strong> ${data.data.sepayInfo.transferContent}</p>
+                                <p><strong>Amount:</strong> ${data.data.sepayInfo.amount.toLocaleString('vi-VN')} VNĐ</p>
+                            </div>
+                        `
+                    }
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${JSON.stringify(data, null, 2)}</pre>`
+                }
+            } catch (error) {
+                console.error('Create payment error:', error)
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<strong>❌ Error!</strong><pre>${error.message}\n\nCheck browser console for details.</pre>`
+            }
+        }
+
+        // Auto-fill token if exists
+        if (token) {
+            document.getElementById('loginResult').className = 'result'
+            document.getElementById('loginResult').innerHTML = '<strong>✅ Token found in localStorage</strong>'
+        }
+    </script>
+</body>
+</html>

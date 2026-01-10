@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SePay Payment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .success {
+            border-left-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+
+        .qr-preview {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .qr-preview img {
+            max-width: 300px;
+            border: 4px solid #667eea;
+            border-radius: 12px;
+            padding: 10px;
+            background: white;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            color: #1565c0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Test SePay Payment System</h1>
+
+        <!-- Login Section -->
+        <div class="test-section">
+            <h2>1. Đăng Nhập</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="loginEmail" value="admin@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="loginPassword" value="admin123">
+            </div>
+            <button onclick="login()">Đăng Nhập</button>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Create Payment Section -->
+        <div class="test-section">
+            <h2>2. Tạo Thanh Toán SePay QR</h2>
+            <div class="info-box">
+                <p><strong>Lưu ý:</strong> Cần đăng nhập trước khi tạo thanh toán</p>
+            </div>
+            <div class="form-group">
+                <label>Property ID:</label>
+                <input type="text" id="propertyId" placeholder="Nhập ID tin đăng">
+            </div>
+            <div class="form-group">
+                <label>Thời gian (ngày):</label>
+                <input type="number" id="durationDays" value="30" min="30">
+            </div>
+            <div class="form-group">
+                <label>Phương thức thanh toán:</label>
+                <select id="paymentMethod">
+                    <option value="sepay_qr">SePay QR Code</option>
+                    <option value="bank_transfer">Chuyển khoản thông thường</option>
+                </select>
+            </div>
+            <button onclick="createPayment()">Tạo Thanh Toán</button>
+            <div id="createPaymentResult" class="result" style="display: none;"></div>
+            <div id="qrPreview" class="qr-preview" style="display: none;"></div>
+        </div>
+
+        <!-- Check Payment Status -->
+        <div class="test-section">
+            <h2>3. Kiểm Tra Trạng Thái Thanh Toán</h2>
+            <div class="form-group">
+                <label>Payment ID:</label>
+                <input type="text" id="checkPaymentId" placeholder="Nhập Payment ID">
+            </div>
+            <button onclick="checkPaymentStatus()">Kiểm Tra</button>
+            <div id="checkPaymentResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test Webhook -->
+        <div class="test-section">
+            <h2>4. Test Webhook (Development Only)</h2>
+            <div class="info-box">
+                <p><strong>Chú ý:</strong> Endpoint này chỉ dùng để test trong môi trường development</p>
+            </div>
+            <div class="form-group">
+                <label>Payment ID:</label>
+                <input type="text" id="webhookPaymentId" placeholder="Nhập Payment ID">
+            </div>
+            <div class="form-group">
+                <label>Số tiền:</label>
+                <input type="number" id="webhookAmount" value="1500000">
+            </div>
+            <button onclick="testWebhook()">Gửi Test Webhook</button>
+            <div id="webhookResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Get My Payments -->
+        <div class="test-section">
+            <h2>5. Danh Sách Thanh Toán Của Tôi</h2>
+            <button onclick="getMyPayments()">Lấy Danh Sách</button>
+            <div id="myPaymentsResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- SePay Service Info -->
+        <div class="test-section">
+            <h2>6. Thông Tin SePay Service</h2>
+            <div class="info-box">
+                <p><strong>API URL:</strong> https://my.sepay.vn/api/v1</p>
+                <p><strong>Webhook URL:</strong> http://localhost:5000/api/sepay/webhook</p>
+                <p><strong>Test Webhook URL:</strong> http://localhost:5000/api/sepay/test-webhook</p>
+                <p><strong>Check Payment URL:</strong> http://localhost:5000/api/sepay/check-payment/:id</p>
+            </div>
+            <div class="form-group">
+                <label>Webhook Payload Example:</label>
+                <textarea readonly>{
+  "id": "TXN123456",
+  "gateway": "VCB",
+  "transaction_date": "2024-01-09 10:30:00",
+  "account_number": "1234567890",
+  "amount_in": 1500000,
+  "amount_out": 0,
+  "transaction_content": "THANHTOAN 67890abcdef",
+  "reference_number": "REF123456"
+}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api'
+        let token = localStorage.getItem('token')
+
+        // Login
+        async function login() {
+            const email = document.getElementById('loginEmail').value
+            const password = document.getElementById('loginPassword').value
+            const resultDiv = document.getElementById('loginResult')
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                })
+
+                const data = await response.json()
+                resultDiv.style.display = 'block'
+
+                if (data.token) {
+                    token = data.token
+                    localStorage.setItem('token', token)
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `<pre>✅ Đăng nhập thành công!\n\n${JSON.stringify(data, null, 2)}</pre>`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<pre>❌ ${data.message || 'Đăng nhập thất bại'}</pre>`
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block'
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<pre>❌ Lỗi: ${error.message}</pre>`
+            }
+        }
+
+        // Create Payment
+        async function createPayment() {
+            if (!token) {
+                alert('Vui lòng đăng nhập trước!')
+                return
+            }
+
+            const propertyId = document.getElementById('propertyId').value
+            const durationDays = parseInt(document.getElementById('durationDays').value)
+            const paymentMethod = document.getElementById('paymentMethod').value
+            const resultDiv = document.getElementById('createPaymentResult')
+            const qrDiv = document.getElementById('qrPreview')
+
+            if (!propertyId) {
+                alert('Vui lòng nhập Property ID')
+                return
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/payment/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ propertyId, durationDays, paymentMethod })
+                })
+
+                const data = await response.json()
+                resultDiv.style.display = 'block'
+
+                if (data.success) {
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `<pre>✅ Tạo thanh toán thành công!\n\n${JSON.stringify(data, null, 2)}</pre>`
+
+                    // Show QR code if SePay
+                    if (paymentMethod === 'sepay_qr' && data.data.sepayInfo) {
+                        qrDiv.style.display = 'block'
+                        qrDiv.innerHTML = `
+                            <h3>Mã QR Thanh Toán</h3>
+                            <img src="${data.data.sepayInfo.qrCodeUrl}" alt="QR Code">
+                            <p><strong>Nội dung CK:</strong> ${data.data.sepayInfo.transferContent}</p>
+                            <p><strong>Số tiền:</strong> ${data.data.sepayInfo.amount.toLocaleString('vi-VN')} VNĐ</p>
+                            <p><strong>Payment ID:</strong> ${data.data.payment._id}</p>
+                        `
+                        
+                        // Auto fill payment ID for checking
+                        document.getElementById('checkPaymentId').value = data.data.payment._id
+                        document.getElementById('webhookPaymentId').value = data.data.payment._id
+                    } else {
+                        qrDiv.style.display = 'none'
+                    }
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<pre>❌ ${data.message || 'Tạo thanh toán thất bại'}</pre>`
+                    qrDiv.style.display = 'none'
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block'
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<pre>❌ Lỗi: ${error.message}</pre>`
+                qrDiv.style.display = 'none'
+            }
+        }
+
+        // Check Payment Status
+        async function checkPaymentStatus() {
+            const paymentId = document.getElementById('checkPaymentId').value
+            const resultDiv = document.getElementById('checkPaymentResult')
+
+            if (!paymentId) {
+                alert('Vui lòng nhập Payment ID')
+                return
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/sepay/check-payment/${paymentId}`)
+                const data = await response.json()
+                resultDiv.style.display = 'block'
+
+                if (data.success) {
+                    const status = data.data.status
+                    const statusBadge = `<span class="status-badge status-${status}">${status.toUpperCase()}</span>`
+                    
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `
+                        <pre>✅ Trạng thái thanh toán: ${statusBadge}\n\n${JSON.stringify(data, null, 2)}</pre>
+                    `
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<pre>❌ ${data.message || 'Không tìm thấy thanh toán'}</pre>`
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block'
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<pre>❌ Lỗi: ${error.message}</pre>`
+            }
+        }
+
+        // Test Webhook
+        async function testWebhook() {
+            const paymentId = document.getElementById('webhookPaymentId').value
+            const amount = parseInt(document.getElementById('webhookAmount').value)
+            const resultDiv = document.getElementById('webhookResult')
+
+            if (!paymentId) {
+                alert('Vui lòng nhập Payment ID')
+                return
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/sepay/test-webhook`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId, amount })
+                })
+
+                const data = await response.json()
+                resultDiv.style.display = 'block'
+
+                if (data.success) {
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `<pre>✅ Test webhook thành công!\n\n${JSON.stringify(data, null, 2)}</pre>`
+                    
+                    // Auto check payment status
+                    setTimeout(() => {
+                        document.getElementById('checkPaymentId').value = paymentId
+                        checkPaymentStatus()
+                    }, 1000)
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<pre>❌ ${data.message || 'Test webhook thất bại'}</pre>`
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block'
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<pre>❌ Lỗi: ${error.message}</pre>`
+            }
+        }
+
+        // Get My Payments
+        async function getMyPayments() {
+            if (!token) {
+                alert('Vui lòng đăng nhập trước!')
+                return
+            }
+
+            const resultDiv = document.getElementById('myPaymentsResult')
+
+            try {
+                const response = await fetch(`${API_URL}/payment/my-payments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+
+                const data = await response.json()
+                resultDiv.style.display = 'block'
+
+                if (data.success) {
+                    resultDiv.className = 'result success'
+                    resultDiv.innerHTML = `<pre>✅ Danh sách thanh toán (${data.data.length} items)\n\n${JSON.stringify(data, null, 2)}</pre>`
+                } else {
+                    resultDiv.className = 'result error'
+                    resultDiv.innerHTML = `<pre>❌ ${data.message || 'Lấy danh sách thất bại'}</pre>`
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block'
+                resultDiv.className = 'result error'
+                resultDiv.innerHTML = `<pre>❌ Lỗi: ${error.message}</pre>`
+            }
+        }
+
+        // Auto-fill token if exists
+        if (token) {
+            document.getElementById('loginResult').style.display = 'block'
+            document.getElementById('loginResult').className = 'result success'
+            document.getElementById('loginResult').innerHTML = '<pre>✅ Đã có token trong localStorage</pre>'
+        }
+    </script>
+</body>
+</html>

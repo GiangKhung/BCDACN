@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Contact Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .contact-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .agent-profile {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .agent-avatar-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+        .agent-avatar-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .agent-avatar-fallback svg {
+            width: 60px;
+            height: 60px;
+        }
+        .agent-name-large {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        .btn-zalo {
+            background: white;
+            color: #0068ff;
+            border: 2px solid #0068ff;
+        }
+        .btn-zalo:hover {
+            background: #0068ff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 104, 255, 0.4);
+        }
+        .btn-call-teal {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: white;
+            border: none;
+        }
+        .btn-call-teal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+        }
+        .btn-favorite-detail {
+            background: white;
+            color: #e03e52;
+            border: 2px solid #e03e52;
+        }
+        .btn-favorite-detail:hover {
+            background: #e03e52;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-favorite-detail.saved {
+            background: #e03e52;
+            color: white;
+        }
+        .btn-favorite-detail.saved svg {
+            fill: white;
+        }
+        svg {
+            width: 22px;
+            height: 22px;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: #0369a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-card">
+        <div class="agent-profile">
+            <div class="agent-avatar-circle">
+                <div class="agent-avatar-fallback">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="agent-name-large">Trương Hoàng Giang</h3>
+        </div>
+        
+        <button class="btn-zalo" onclick="handleZalo()">
+            <img 
+                src="/images/logo/zalo-icon.png" 
+                alt="Zalo" 
+                style="width: 28px; height: 28px;"
+                onerror="this.style.display='none'"
+            />
+            <span>📱</span>
+            Chat qua Zalo
+        </button>
+        
+        <button class="btn-call-teal" onclick="handlePhone()">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+            </svg>
+            <span id="phoneDisplay">0965 082 *** - Hiện số</span>
+        </button>
+        
+        <button class="btn-favorite-detail" id="saveBtn" onclick="handleSave()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span id="saveText">Lưu tin</span>
+        </button>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        const phone = '0965082123'
+        let showFullPhone = false
+        let isSaved = false
+
+        function formatPhone(phone, showFull) {
+            if (showFull) {
+                return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')
+            }
+            return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 ***')
+        }
+
+        function handlePhone() {
+            if (!showFullPhone) {
+                showFullPhone = true
+                document.getElementById('phoneDisplay').textContent = formatPhone(phone, true)
+                showStatus('✅ Đã hiện số điện thoại')
+            } else {
+                window.location.href = `tel:${phone}`
+                showStatus('📞 Đang gọi...')
+            }
+        }
+
+        function handleZalo() {
+            const cleanPhone = phone.replace(/\D/g, '')
+            window.open(`https://zalo.me/${cleanPhone}`, '_blank')
+            showStatus('💬 Đang mở Zalo...')
+        }
+
+        function handleSave() {
+            isSaved = !isSaved
+            const saveBtn = document.getElementById('saveBtn')
+            const saveText = document.getElementById('saveText')
+            const svg = saveBtn.querySelector('svg')
+
+            if (isSaved) {
+                saveBtn.classList.add('saved')
+                svg.setAttribute('fill', 'currentColor')
+                saveText.textContent = 'Đã lưu tin'
+                showStatus('❤️ Đã lưu tin thành công')
+            } else {
+                saveBtn.classList.remove('saved')
+                svg.setAttribute('fill', 'none')
+                saveText.textContent = 'Lưu tin'
+                showStatus('🗑️ Đã bỏ lưu tin')
+            }
+        }
+
+        function showStatus(message) {
+            const status = document.getElementById('status')
+            status.textContent = message
+            setTimeout(() => {
+                status.textContent = ''
+            }, 3000)
+        }
+    </script>
+</body>
+</html>

@@ -617,18 +617,20 @@
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .btn-action {
-    padding: 6px 12px;
+    padding: 4px 8px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     transition: all 0.3s;
-    min-width: 35px;
+    min-width: 60px;
+    white-space: nowrap;
 }
 
 .btn-action.btn-success {
@@ -769,4 +771,103 @@
     .btn-action {
         width: 100%;
     }
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+}
+
+/* Admin Table */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table thead {
+    background: #f8f9fa;
+}
+
+.admin-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background 0.2s;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.admin-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.admin-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #2d3748;
+    vertical-align: middle;
+    border-right: 1px solid #e2e8f0;
+}
+
+.admin-table td:last-child {
+    border-right: none;
+    padding: 8px;
+    width: 180px;
+}
+
+.admin-table td small {
+    display: block;
+    color: #718096;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 14px;
+    color: #64748b;
 }

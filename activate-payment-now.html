@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kích Hoạt Thanh Toán Ngay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        .warning strong {
+            color: #d39e00;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .result pre {
+            background: rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Kích Hoạt Thanh Toán</h1>
+        <p class="subtitle">Dành cho những ai đã chuyển khoản nhưng webhook không hoạt động</p>
+
+        <div class="warning">
+            <strong>⚠️ LƯU Ý:</strong> Chỉ sử dụng tool này khi bạn ĐÃ CHUYỂN KHOẢN THẬT!
+        </div>
+
+        <label>Payment ID:</label>
+        <input 
+            type="text" 
+            id="paymentId" 
+            placeholder="69616152cc145ead876f3edb"
+            value="69616152cc145ead876f3edb"
+        >
+
+        <button onclick="activatePayment()" id="btnActivate">
+            ✅ Kích Hoạt Ngay
+        </button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api'
+
+        async function activatePayment() {
+            const paymentId = document.getElementById('paymentId').value.trim()
+            const resultDiv = document.getElementById('result')
+            const btn = document.getElementById('btnActivate')
+
+            if (!paymentId) {
+                showResult('error', '❌ Lỗi', 'Vui lòng nhập Payment ID!')
+                return
+            }
+
+            if (paymentId.length !== 24) {
+                showResult('error', '❌ Lỗi', 'Payment ID phải có 24 ký tự!')
+                return
+            }
+
+            btn.disabled = true
+            btn.textContent = '⏳ Đang xử lý...'
+
+            try {
+                // Step 1: Get payment info
+                console.log('Step 1: Getting payment info...')
+                const checkResponse = await fetch(`${API_URL}/sepay/check-payment/${paymentId}`)
+                const checkData = await checkResponse.json()
+
+                if (!checkData.success) {
+                    showResult('error', '❌ Không tìm thấy thanh toán', checkData.message)
+                    btn.disabled = false
+                    btn.textContent = '✅ Kích Hoạt Ngay'
+                    return
+                }
+
+                const amount = checkData.data.amount
+                console.log('Payment found:', checkData.data)
+
+                // Step 2: Test webhook
+                console.log('Step 2: Activating payment...')
+                const response = await fetch(`${API_URL}/sepay/test-webhook`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId, amount })
+                })
+
+                const data = await response.json()
+                console.log('Response:', data)
+
+                if (data.success) {
+                    showResult('success', '🎉 Kích hoạt thành công!', `
+                        <strong>Thông tin thanh toán:</strong>
+                        <pre>Payment ID: ${data.data.payment._id}
+Status: ${data.data.payment.status}
+Transaction ID: ${data.data.payment.transactionId}
+Confirmed At: ${new Date(data.data.payment.confirmedAt).toLocaleString('vi-VN')}
+
+Property ID: ${data.data.property._id}
+Property Active: ${data.data.property.isActive ? '✅ Đã kích hoạt' : '❌ Chưa kích hoạt'}
+Expires At: ${new Date(data.data.property.expiresAt).toLocaleString('vi-VN')}</pre>
+                        <p style="margin-top: 15px; font-weight: 600;">
+                            ✅ Tin đăng của bạn đã được kích hoạt thành công!<br>
+                            🔄 Vui lòng refresh trang để xem thay đổi.
+                        </p>
+                    `)
+                } else {
+                    showResult('error', '❌ Kích hoạt thất bại', `
+                        <strong>Lỗi:</strong> ${data.message}
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `)
+                }
+            } catch (error) {
+                console.error('Error:', error)
+                showResult('error', '❌ Lỗi kết nối', `
+                    <strong>Không thể kết nối đến server:</strong>
+                    <pre>${error.message}</pre>
+                    <p style="margin-top: 10px;">
+                        Đảm bảo server đang chạy tại http://localhost:5000
+                    </p>
+                `)
+            } finally {
+                btn.disabled = false
+                btn.textContent = '✅ Kích Hoạt Ngay'
+            }
+        }
+
+        function showResult(type, title, content) {
+            const resultDiv = document.getElementById('result')
+            resultDiv.className = `result ${type} show`
+            resultDiv.innerHTML = `
+                <h3>${title}</h3>
+                ${content}
+            `
+        }
+
+        // Auto focus
+        document.getElementById('paymentId').focus()
+
+        // Enter to activate
+        document.getElementById('paymentId').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                activatePayment()
+            }
+        })
+    </script>
+</body>
+</html>

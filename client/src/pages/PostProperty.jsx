@@ -177,8 +177,13 @@ function PostProperty() {
       })
 
       if (response.ok) {
-        alert('Đăng tin thành công!')
-        navigate('/my-properties')
+        const result = await response.json()
+        const propertyId = result._id || result.id
+        
+        alert('Đăng tin thành công! Vui lòng thanh toán để kích hoạt tin đăng.')
+        
+        // Redirect đến trang thanh toán
+        navigate(`/payment/${propertyId}`)
       } else {
         const error = await response.json()
         alert(error.message || 'Có lỗi xảy ra khi đăng tin')

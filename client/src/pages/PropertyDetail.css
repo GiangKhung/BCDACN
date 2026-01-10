@@ -579,12 +579,28 @@
     background: white;
     color: #e03e52;
     border: 2px solid #e03e52;
+    transition: all 0.3s ease;
 }
 
 .btn-favorite-detail:hover {
     background: #e03e52;
     color: white;
     transform: translateY(-2px);
+}
+
+.btn-favorite-detail.saved {
+    background: #e03e52;
+    color: white;
+    border-color: #e03e52;
+}
+
+.btn-favorite-detail.saved svg {
+    fill: white;
+}
+
+.btn-favorite-detail:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .btn-report {

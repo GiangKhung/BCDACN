@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Payment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .test-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .test-group {
+            margin-bottom: 20px;
+        }
+        .test-group h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #e83e8c;
+        }
+        .test-section ul, .test-section ol {
+            margin: 10px 0;
+        }
+        .test-section li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Payment System</h1>
+
+        <!-- Instructions Section -->
+        <div class="test-section" style="background: #fff3cd; border-left: 5px solid #ffc107;">
+            <h2 style="color: #856404;">📋 Hướng dẫn Test</h2>
+            <div style="color: #856404; line-height: 1.8;">
+                <h3 style="margin-top: 15px;">🔐 Thông tin đăng nhập:</h3>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Email:</strong> admin@batdongsan.com</li>
+                    <li><strong>Password:</strong> admin123456</li>
+                    <li><strong>Role:</strong> admin</li>
+                </ul>
+
+                <h3 style="margin-top: 15px;">📝 Quy trình test:</h3>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Đăng nhập:</strong> Nhập email/password và click "🔐 Login" (token sẽ tự động lưu)</li>
+                    <li><strong>Tính phí:</strong> Test tính phí với số ngày khác nhau (30, 60, 90 ngày)</li>
+                    <li><strong>Tạo payment:</strong> Nhập Property ID và tạo payment request</li>
+                    <li><strong>Xem danh sách:</strong> Admin xem tất cả payments theo status</li>
+                    <li><strong>Xác nhận payment:</strong> Admin confirm payment để kích hoạt property</li>
+                    <li><strong>Thống kê:</strong> Xem tổng quan doanh thu và payments</li>
+                    <li><strong>Check expired:</strong> Test cron job kiểm tra properties hết hạn</li>
+                    <li><strong>Removal request:</strong> Test yêu cầu gỡ bỏ property</li>
+                </ol>
+
+                <h3 style="margin-top: 15px;">💡 Lưu ý:</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Server phải chạy tại: <code>http://localhost:5000</code></li>
+                    <li>Token được lưu tự động vào localStorage sau khi login</li>
+                    <li><strong>Property ID mẫu:</strong> <code>6789abcd1234ef5678901234</code> (thay bằng ID thực từ database)</li>
+                    <li><strong>Lấy Property ID thực:</strong> Vào MongoDB hoặc tạo property mới từ client</li>
+                    <li><strong>Lấy Payment ID:</strong> Sau khi tạo payment (section 3), copy ID từ kết quả hoặc xem danh sách (section 4)</li>
+                    <li>Admin role mới có quyền confirm payment và xem statistics</li>
+                    <li>Giá mặc định: 100,000 VNĐ/ngày (có thể giảm giá theo thời gian)</li>
+                </ul>
+
+                <h3 style="margin-top: 15px;">🎯 Test Flow gợi ý:</h3>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Login</strong> → Lấy token</li>
+                    <li><strong>Calculate</strong> → Test với 30, 60, 90 ngày để xem giá</li>
+                    <li><strong>Create Payment</strong> → Tạo payment request mới</li>
+                    <li><strong>Get Payments</strong> → Xem payment vừa tạo, copy Payment ID</li>
+                    <li><strong>Confirm Payment</strong> → Paste Payment ID và confirm</li>
+                    <li><strong>Statistics</strong> → Xem tổng quan sau khi confirm</li>
+                    <li><strong>Check Expired</strong> → Test cron job</li>
+                </ol>
+
+                <h3 style="margin-top: 15px;">🔧 Troubleshooting:</h3>
+                <ul style="margin-left: 20px;">
+                    <li><strong>401 Unauthorized:</strong> Token hết hạn → Đăng nhập lại</li>
+                    <li><strong>403 Forbidden:</strong> Không có quyền admin → Kiểm tra role</li>
+                    <li><strong>404 Not Found:</strong> Property/Payment không tồn tại → Kiểm tra ID</li>
+                    <li><strong>Connection Error:</strong> Server chưa chạy → Chạy <code>npm run dev</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 1: Authentication -->
+        <div class="test-section">
+            <h2>1️⃣ Authentication</h2>
+            <div class="test-group">
+                <h3>Login</h3>
+                <div id="tokenStatus" style="padding: 10px; margin-bottom: 10px; border-radius: 5px; background: #f8d7da; color: #721c24;">
+                    ⚠️ Chưa đăng nhập - Vui lòng login để lấy token
+                </div>
+                <input type="email" id="loginEmail" placeholder="Email" value="admin@batdongsan.com">
+                <input type="password" id="loginPassword" placeholder="Password" value="admin123456">
+                <button onclick="testLogin()">🔐 Login</button>
+                <button onclick="clearToken()" style="background: #dc3545;">🗑️ Clear Token</button>
+                <div id="loginResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 2: Payment Calculation -->
+        <div class="test-section">
+            <h2>2️⃣ Payment Calculation</h2>
+            <div class="test-group">
+                <h3>Calculate Payment</h3>
+                <input type="text" id="propertyId" placeholder="Property ID (optional)" value="6789abcd1234ef5678901234">
+                <input type="number" id="durationDays" placeholder="Duration (days)" value="30" min="30">
+                <button onclick="testCalculatePayment()">💰 Calculate</button>
+                <div id="calculateResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 3: Create Payment -->
+        <div class="test-section">
+            <h2>3️⃣ Create Payment</h2>
+            <div class="test-group">
+                <h3>Create Payment Request</h3>
+                <input type="text" id="createPropertyId" placeholder="Property ID" value="6789abcd1234ef5678901234">
+                <input type="number" id="createDuration" placeholder="Duration (days)" value="30" min="30">
+                <select id="paymentMethod">
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="momo">MoMo</option>
+                    <option value="vnpay">VNPay</option>
+                </select>
+                <button onclick="testCreatePayment()">📝 Create Payment</button>
+                <div id="createPaymentResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 4: Admin - Get Payments -->
+        <div class="test-section">
+            <h2>4️⃣ Admin - Get Payments</h2>
+            <div class="test-group">
+                <h3>Get Payments List</h3>
+                <select id="paymentStatus">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <button onclick="testGetPayments()">📋 Get Payments</button>
+                <div id="getPaymentsResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 5: Admin - Confirm Payment -->
+        <div class="test-section">
+            <h2>5️⃣ Admin - Confirm Payment</h2>
+            <div class="test-group">
+                <h3>Confirm Payment</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="confirmPaymentId" placeholder="Payment ID (auto-filled from section 3)" value="" style="flex: 1;">
+                    <button onclick="copyToClipboard(document.getElementById('confirmPaymentId').value, 'Payment ID copied!')" style="width: auto; padding: 10px 15px;">📋 Copy</button>
+                </div>
+                <input type="text" id="adminNote" placeholder="Admin Note (optional)" value="Đã xác nhận thanh toán qua Vietcombank">
+                <button onclick="testConfirmPayment()">✅ Confirm</button>
+                <div id="confirmPaymentResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 6: Statistics -->
+        <div class="test-section">
+            <h2>6️⃣ Statistics</h2>
+            <div class="test-group">
+                <h3>Get Overview Statistics</h3>
+                <button onclick="testGetStatistics()">📊 Get Statistics</button>
+                <div id="statisticsResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 7: Cron Job -->
+        <div class="test-section">
+            <h2>7️⃣ Cron Job - Check Expired Properties</h2>
+            <div class="test-group">
+                <h3>Manually Trigger Check</h3>
+                <button onclick="testCheckExpired()">⏰ Check Expired Now</button>
+                <div id="checkExpiredResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Section 8: Removal Request -->
+        <div class="test-section">
+            <h2>8️⃣ Removal Request</h2>
+            <div class="test-group">
+                <h3>Create Removal Request</h3>
+                <input type="text" id="removalPropertyId" placeholder="Property ID" value="6789abcd1234ef5678901234">
+                <input type="text" id="removalReason" placeholder="Reason" value="Bất động sản đã được bán">
+                <button onclick="testCreateRemovalRequest()">🗑️ Request Removal</button>
+                <div id="removalRequestResult" class="result" style="display:none;"></div>
+            </div>
+            <div class="test-group">
+                <h3>Get Removal Requests</h3>
+                <select id="removalStatus">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <button onclick="testGetRemovalRequests()">📋 Get Requests</button>
+                <div id="getRemovalResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let token = localStorage.getItem('token') || '';
+
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${isError ? 'error' : 'success'}`;
+            element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        function copyToClipboard(text, message = 'Đã copy!') {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(message);
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (data.token) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    updateTokenStatus(true, data.user);
+                }
+
+                showResult('loginResult', data, !response.ok);
+            } catch (error) {
+                showResult('loginResult', { error: error.message }, true);
+            }
+        }
+
+        function clearToken() {
+            token = '';
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            updateTokenStatus(false);
+            alert('✅ Token đã được xóa!');
+        }
+
+        function updateTokenStatus(isLoggedIn, user = null) {
+            const statusDiv = document.getElementById('tokenStatus');
+            if (isLoggedIn && user) {
+                statusDiv.style.background = '#d4edda';
+                statusDiv.style.color = '#155724';
+                statusDiv.innerHTML = `✅ Đã đăng nhập: <strong>${user.name}</strong> (${user.email}) - Role: <strong>${user.role}</strong>`;
+            } else {
+                statusDiv.style.background = '#f8d7da';
+                statusDiv.style.color = '#721c24';
+                statusDiv.innerHTML = '⚠️ Chưa đăng nhập - Vui lòng login để lấy token';
+            }
+        }
+
+        async function testCalculatePayment() {
+            const propertyId = document.getElementById('propertyId').value;
+            const durationDays = document.getElementById('durationDays').value;
+
+            try {
+                const url = propertyId 
+                    ? `${API_URL}/payment/calculate?propertyId=${propertyId}&durationDays=${durationDays}`
+                    : `${API_URL}/payment/calculate?durationDays=${durationDays}`;
+
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                showResult('calculateResult', data, !response.ok);
+            } catch (error) {
+                showResult('calculateResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCreatePayment() {
+            const propertyId = document.getElementById('createPropertyId').value;
+            const durationDays = document.getElementById('createDuration').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            if (!propertyId) {
+                alert('Please enter Property ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/payment/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        propertyId,
+                        durationDays: parseInt(durationDays),
+                        paymentMethod,
+                        bankTransferInfo: {
+                            bankName: 'Vietcombank',
+                            accountNumber: '1234567890',
+                            accountName: 'Test User',
+                            transferContent: `PAY ${propertyId}`
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                showResult('createPaymentResult', data, !response.ok);
+                
+                // Auto-fill Payment ID if success
+                if (response.ok && data.payment && data.payment._id) {
+                    document.getElementById('confirmPaymentId').value = data.payment._id;
+                    console.log('✅ Payment ID auto-filled:', data.payment._id);
+                }
+            } catch (error) {
+                showResult('createPaymentResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetPayments() {
+            const status = document.getElementById('paymentStatus').value;
+
+            try {
+                const response = await fetch(`${API_URL}/admin/payments?status=${status}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                showResult('getPaymentsResult', data, !response.ok);
+            } catch (error) {
+                showResult('getPaymentsResult', { error: error.message }, true);
+            }
+        }
+
+        async function testConfirmPayment() {
+            const paymentId = document.getElementById('confirmPaymentId').value;
+            const adminNote = document.getElementById('adminNote').value;
+
+            if (!paymentId) {
+                alert('Please enter Payment ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/admin/payments/${paymentId}/confirm`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ adminNote })
+                });
+
+                const data = await response.json();
+                showResult('confirmPaymentResult', data, !response.ok);
+            } catch (error) {
+                showResult('confirmPaymentResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetStatistics() {
+            try {
+                const response = await fetch(`${API_URL}/statistics/overview`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                showResult('statisticsResult', data, !response.ok);
+            } catch (error) {
+                showResult('statisticsResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCheckExpired() {
+            try {
+                const response = await fetch(`${API_URL}/admin/check-expired-properties`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                showResult('checkExpiredResult', data, !response.ok);
+            } catch (error) {
+                showResult('checkExpiredResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCreateRemovalRequest() {
+            const propertyId = document.getElementById('removalPropertyId').value;
+            const reason = document.getElementById('removalReason').value;
+
+            if (!propertyId) {
+                alert('Please enter Property ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/removal-requests`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ propertyId, reason })
+                });
+
+                const data = await response.json();
+                showResult('removalRequestResult', data, !response.ok);
+            } catch (error) {
+                showResult('removalRequestResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetRemovalRequests() {
+            const status = document.getElementById('removalStatus').value;
+
+            try {
+                const response = await fetch(`${API_URL}/removal-requests?status=${status}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                showResult('getRemovalResult', data, !response.ok);
+            } catch (error) {
+                showResult('getRemovalResult', { error: error.message }, true);
+            }
+        }
+
+        // Auto-load token on page load
+        window.onload = () => {
+            if (token) {
+                console.log('Token loaded from localStorage');
+                try {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    updateTokenStatus(true, user);
+                } catch (e) {
+                    updateTokenStatus(false);
+                }
+            } else {
+                updateTokenStatus(false);
+            }
+        };
+    </script>
+</body>
+</html>

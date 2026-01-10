@@ -21,6 +21,8 @@ function Profile() {
   })
   const [showPasswordForm, setShowPasswordForm] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
+  const [avatarPreview, setAvatarPreview] = useState('')
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   useEffect(() => {
     fetchUserProfile()
@@ -45,6 +47,7 @@ function Profile() {
         phone: response.data.phone || '',
         avatar: response.data.avatar || ''
       })
+      setAvatarPreview(response.data.avatar || '')
     } catch (error) {
       console.error('Lỗi khi tải thông tin:', error)
       if (error.response?.status === 401) {
@@ -60,6 +63,50 @@ function Profile() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    })
+  }
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Vui lòng chọn file ảnh!' })
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Kích thước ảnh không được vượt quá 5MB!' })
+      return
+    }
+
+    setUploadingAvatar(true)
+
+    // Convert to base64
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result
+      setAvatarPreview(base64String)
+      setFormData({
+        ...formData,
+        avatar: base64String
+      })
+      setUploadingAvatar(false)
+    }
+    reader.onerror = () => {
+      setMessage({ type: 'error', text: 'Lỗi khi đọc file ảnh!' })
+      setUploadingAvatar(false)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleRemoveAvatar = () => {
+    setAvatarPreview('')
+    setFormData({
+      ...formData,
+      avatar: ''
     })
   }
 
@@ -253,14 +300,48 @@ function Profile() {
                   </div>
 
                   <div className="form-group">
-                    <label>URL Avatar</label>
-                    <input
-                      type="url"
-                      name="avatar"
-                      value={formData.avatar}
-                      onChange={handleInputChange}
-                      placeholder="https://example.com/avatar.jpg"
-                    />
+                    <label>Ảnh đại diện</label>
+                    <div className="avatar-upload-container">
+                      <div className="avatar-preview">
+                        {avatarPreview ? (
+                          <img src={avatarPreview} alt="Avatar preview" />
+                        ) : (
+                          <div className="avatar-placeholder">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="avatar-upload-actions">
+                        <label className="btn-upload-avatar">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                          </svg>
+                          {uploadingAvatar ? 'Đang tải...' : 'Chọn ảnh'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                            style={{ display: 'none' }}
+                            disabled={uploadingAvatar}
+                          />
+                        </label>
+                        {avatarPreview && (
+                          <button
+                            type="button"
+                            className="btn-remove-avatar"
+                            onClick={handleRemoveAvatar}
+                          >
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                            Xóa
+                          </button>
+                        )}
+                      </div>
+                      <small>Chọn ảnh từ thiết bị (tối đa 5MB)</small>
+                    </div>
                   </div>
 
                   <div className="form-actions">

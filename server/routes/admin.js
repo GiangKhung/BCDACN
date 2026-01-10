@@ -1,8 +1,7 @@
 import express from 'express'
 import Property from '../models/Property.js'
 import User from '../models/User.js'
-import auth from '../middleware/auth.js'
-import adminAuth from '../middleware/adminAuth.js'
+import { auth, adminAuth } from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -360,6 +359,63 @@ router.get('/reports/timeline', async (req, res) => {
     } catch (error) {
         console.error('Get timeline report error:', error)
         res.status(500).json({ message: 'Lỗi khi lấy báo cáo' })
+    }
+})
+
+// ============ CRON JOB MANAGEMENT ============
+
+// Chạy check expired properties ngay lập tức
+router.post('/check-expired-properties', async (req, res) => {
+    try {
+        const now = new Date()
+
+        // Tìm các tin đăng đã hết hạn
+        const expiredProperties = await Property.find({
+            isActive: true,
+            'payment.isPaid': true,
+            'payment.endDate': { $lt: now }
+        })
+
+        if (expiredProperties.length === 0) {
+            return res.json({
+                success: true,
+                message: 'Không có tin đăng nào hết hạn',
+                count: 0
+            })
+        }
+
+        // Deactivate các tin đăng hết hạn
+        const result = await Property.updateMany(
+            {
+                isActive: true,
+                'payment.isPaid': true,
+                'payment.endDate': { $lt: now }
+            },
+            {
+                $set: {
+                    isActive: false,
+                    status: 'pending'
+                }
+            }
+        )
+
+        res.json({
+            success: true,
+            message: `Đã deactivate ${result.modifiedCount} tin đăng hết hạn`,
+            count: result.modifiedCount,
+            properties: expiredProperties.map(p => ({
+                id: p._id,
+                title: p.title,
+                endDate: p.payment.endDate
+            }))
+        })
+    } catch (error) {
+        console.error('Check expired properties error:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi kiểm tra tin đăng hết hạn',
+            error: error.message
+        })
     }
 })
 

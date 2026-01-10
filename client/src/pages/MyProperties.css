@@ -280,12 +280,16 @@
 
 .property-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
 .btn-view,
+.btn-payment,
+.btn-removal,
 .btn-delete {
     flex: 1;
+    min-width: 120px;
     padding: 10px 16px;
     border-radius: 8px;
     font-size: 14px;
@@ -311,6 +315,27 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+.btn-payment {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-payment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.btn-removal {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+}
+
+.btn-removal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(250, 112, 154, 0.3);
+}
+
 .btn-delete {
     background: white;
     color: #e03e52;
@@ -324,9 +349,44 @@
 }
 
 .btn-view svg,
+.btn-payment svg,
+.btn-removal svg,
 .btn-delete svg {
     width: 18px;
     height: 18px;
+}
+
+.removal-status {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
 }
 
 @media (max-width: 768px) {

@@ -492,14 +492,14 @@ function Admin() {
                                   onClick={() => handleApproveProperty(property._id)}
                                   title="Duyệt tin"
                                 >
-                                  ✓
+                                  ✓ Duyệt
                                 </button>
                                 <button
                                   className="btn-action btn-danger"
                                   onClick={() => setSelectedProperty(property)}
                                   title="Từ chối"
                                 >
-                                  ✗
+                                  ✗ Từ chối
                                 </button>
                               </>
                             )}
@@ -517,7 +517,7 @@ function Admin() {
                               onClick={() => handleDeleteProperty(property._id)}
                               title="Xóa"
                             >
-                              🗑
+                              🗑 Xóa
                             </button>
                           </div>
                         </td>

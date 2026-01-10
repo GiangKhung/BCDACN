@@ -9,9 +9,13 @@ function PropertyDetail() {
   const [loading, setLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showGallery, setShowGallery] = useState(false)
+  const [showFullPhone, setShowFullPhone] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [savingProperty, setSavingProperty] = useState(false)
 
   useEffect(() => {
     fetchProperty()
+    checkIfSaved()
   }, [id])
 
   const fetchProperty = async () => {
@@ -23,6 +27,73 @@ function PropertyDetail() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const checkIfSaved = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+
+    try {
+      const response = await axios.get('http://localhost:5000/api/auth/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const savedProperties = response.data.savedProperties || []
+      setIsSaved(savedProperties.some(p => p._id === id || p === id))
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra tin đã lưu:', error)
+    }
+  }
+
+  const handleSaveProperty = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Vui lòng đăng nhập để lưu tin')
+      window.location.href = '/login'
+      return
+    }
+
+    setSavingProperty(true)
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/properties/${id}/save`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+
+      if (response.data.success) {
+        setIsSaved(!isSaved)
+        alert(isSaved ? 'Đã bỏ lưu tin' : 'Đã lưu tin thành công')
+      }
+    } catch (error) {
+      console.error('Lỗi khi lưu tin:', error)
+      alert('Không thể lưu tin. Vui lòng thử lại.')
+    } finally {
+      setSavingProperty(false)
+    }
+  }
+
+  const handleShowPhone = () => {
+    setShowFullPhone(true)
+  }
+
+  const handleCallPhone = (phone) => {
+    window.location.href = `tel:${phone}`
+  }
+
+  const handleZaloChat = (phone) => {
+    // Remove all non-digit characters
+    const cleanPhone = phone.replace(/\D/g, '')
+    window.open(`https://zalo.me/${cleanPhone}`, '_blank')
+  }
+
+  const formatPhoneDisplay = (phone) => {
+    if (!phone) return '0965 082 ***'
+    if (showFullPhone) {
+      // Format: 0965 082 123
+      return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')
+    }
+    // Hide last 3 digits
+    return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 ***')
   }
 
   if (loading) {
@@ -524,7 +595,10 @@ function PropertyDetail() {
                 </div>
               )}
               
-              <button className="btn-zalo">
+              <button 
+                className="btn-zalo"
+                onClick={() => handleZaloChat(property.agent?.phone || property.contactPhone || '0965082123')}
+              >
                 <img 
                   src="/images/logo/zalo-icon.png" 
                   alt="Zalo" 
@@ -533,27 +607,31 @@ function PropertyDetail() {
                 Chat qua Zalo
               </button>
               
-              <button className="btn-call-teal">
+              <button 
+                className="btn-call-teal"
+                onClick={() => {
+                  if (showFullPhone) {
+                    handleCallPhone(property.agent?.phone || property.contactPhone || '0965082123')
+                  } else {
+                    handleShowPhone()
+                  }
+                }}
+              >
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
                 </svg>
-                0965 082 *** - Hiện số
+                {formatPhoneDisplay(property.agent?.phone || property.contactPhone || '0965082123')} {showFullPhone ? '' : '- Hiện số'}
               </button>
               
-              <button className="btn-favorite-detail">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button 
+                className={`btn-favorite-detail ${isSaved ? 'saved' : ''}`}
+                onClick={handleSaveProperty}
+                disabled={savingProperty}
+              >
+                <svg viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
-                Lưu tin
-              </button>
-            </div>
-
-            <div className="report-card">
-              <button className="btn-report">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                </svg>
-                Báo cáo tin đăng
+                {savingProperty ? 'Đang xử lý...' : (isSaved ? 'Đã lưu tin' : 'Lưu tin')}
               </button>
             </div>
           </div>

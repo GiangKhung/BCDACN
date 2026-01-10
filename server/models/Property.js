@@ -150,6 +150,81 @@ const propertySchema = new mongoose.Schema({
     approvedAt: {
         type: Date
     },
+    // THANH TOÁN & QUẢN LÝ TIN ĐĂNG
+    payment: {
+        isPaid: {
+            type: Boolean,
+            default: false
+        },
+        amount: {
+            type: Number,
+            default: 0 // Tổng số tiền đã thanh toán
+        },
+        pricePerDay: {
+            type: Number,
+            default: 50000 // 50,000 VNĐ/ngày
+        },
+        durationDays: {
+            type: Number,
+            default: 30, // Tối thiểu 30 ngày
+            min: 30
+        },
+        startDate: {
+            type: Date
+        },
+        endDate: {
+            type: Date
+        },
+        paymentMethod: {
+            type: String,
+            enum: ['bank_transfer', 'sepay_qr', 'momo', 'vnpay', 'cash'],
+            default: 'bank_transfer'
+        },
+        transactionId: {
+            type: String
+        },
+        paymentStatus: {
+            type: String,
+            enum: ['pending', 'completed', 'failed', 'refunded'],
+            default: 'pending'
+        },
+        paidAt: {
+            type: Date
+        }
+    },
+    // Yêu cầu gỡ tin (khi đã bán)
+    removalRequest: {
+        isRequested: {
+            type: Boolean,
+            default: false
+        },
+        requestedAt: {
+            type: Date
+        },
+        reason: {
+            type: String
+        },
+        status: {
+            type: String,
+            enum: ['pending', 'approved', 'rejected'],
+            default: 'pending'
+        },
+        processedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        processedAt: {
+            type: Date
+        }
+    },
+    // Trạng thái hoạt động
+    isActive: {
+        type: Boolean,
+        default: false // Chỉ active khi đã thanh toán
+    },
+    expiresAt: {
+        type: Date // Ngày hết hạn tin đăng
+    },
     // Thông tin người đăng
     userId: {
         type: mongoose.Schema.Types.ObjectId,

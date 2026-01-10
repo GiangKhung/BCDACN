@@ -89,15 +89,23 @@ const auth = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '')
         if (!token) {
-            return res.status(401).json({ message: 'Không tìm thấy token' })
+            return res.status(401).json({ success: false, message: 'Không tìm thấy token' })
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key')
-        req.userId = decoded.id
+        const User = (await import('../models/User.js')).default
+        const user = await User.findById(decoded.userId || decoded.id).select('-password')
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' })
+        }
+
+        req.userId = decoded.userId || decoded.id
+        req.user = user
         next()
     } catch (error) {
         console.error('Auth error:', error)
-        res.status(401).json({ message: 'Token không hợp lệ' })
+        res.status(401).json({ success: false, message: 'Token không hợp lệ' })
     }
 }
 
@@ -166,6 +174,56 @@ router.delete('/:id', async (req, res) => {
         res.json({ message: 'Đã xóa bất động sản thành công' })
     } catch (error) {
         res.status(500).json({ message: error.message })
+    }
+})
+
+// Lưu/Bỏ lưu tin đăng
+router.post('/:id/save', auth, async (req, res) => {
+    try {
+        const propertyId = req.params.id
+        const User = (await import('../models/User.js')).default
+        const user = await User.findById(req.user._id)
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' })
+        }
+
+        // Kiểm tra property có tồn tại không
+        const property = await Property.findById(propertyId)
+        if (!property) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy tin đăng' })
+        }
+
+        // Kiểm tra đã lưu chưa
+        const savedIndex = user.savedProperties.findIndex(
+            p => p.toString() === propertyId
+        )
+
+        if (savedIndex > -1) {
+            // Đã lưu -> Bỏ lưu
+            user.savedProperties.splice(savedIndex, 1)
+            await user.save()
+            return res.json({
+                success: true,
+                message: 'Đã bỏ lưu tin',
+                isSaved: false
+            })
+        } else {
+            // Chưa lưu -> Lưu
+            user.savedProperties.push(propertyId)
+            await user.save()
+            return res.json({
+                success: true,
+                message: 'Đã lưu tin thành công',
+                isSaved: true
+            })
+        }
+    } catch (error) {
+        console.error('Save property error:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lưu tin'
+        })
     }
 })
 

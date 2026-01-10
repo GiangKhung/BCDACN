@@ -72,6 +72,41 @@ function MyProperties() {
     }
   }
 
+  const handleRequestRemoval = async (property) => {
+    const reason = prompt('Vui lòng nhập lý do gỡ tin (VD: Đã bán, Đã cho thuê):')
+    
+    if (!reason || !reason.trim()) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:5000/api/removal-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          propertyId: property._id,
+          reason: reason.trim()
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        alert('Đã gửi yêu cầu gỡ tin! Quản trị viên sẽ xem xét trong thời gian sớm nhất.')
+        fetchMyProperties()
+      } else {
+        alert(data.message || 'Có lỗi xảy ra')
+      }
+    } catch (error) {
+      console.error('Error requesting removal:', error)
+      alert('Không thể kết nối đến server')
+    }
+  }
+
   const formatPrice = (price) => {
     if (price >= 1000000000) {
       return `${(price / 1000000000).toFixed(1)} tỷ`
@@ -218,6 +253,45 @@ function MyProperties() {
                       </svg>
                       Xem chi tiết
                     </Link>
+                    
+                    {/* Nút thanh toán - hiện khi chưa thanh toán */}
+                    {!property.payment?.isPaid && property.status !== 'sold' && (
+                      <Link to={`/payment/${property._id}`} className="btn-payment">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                        </svg>
+                        Thanh toán
+                      </Link>
+                    )}
+                    
+                    {/* Nút yêu cầu gỡ tin - hiện khi đã thanh toán và đang active */}
+                    {property.payment?.isPaid && property.isActive && !property.removalRequest?.isRequested && (
+                      <button 
+                        className="btn-removal" 
+                        onClick={() => handleRequestRemoval(property)}
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Yêu cầu gỡ tin
+                      </button>
+                    )}
+                    
+                    {/* Hiển thị trạng thái yêu cầu gỡ tin */}
+                    {property.removalRequest?.isRequested && (
+                      <div className="removal-status">
+                        {property.removalRequest.status === 'pending' && (
+                          <span className="status-pending">⏳ Chờ duyệt gỡ tin</span>
+                        )}
+                        {property.removalRequest.status === 'approved' && (
+                          <span className="status-approved">✓ Đã duyệt gỡ tin</span>
+                        )}
+                        {property.removalRequest.status === 'rejected' && (
+                          <span className="status-rejected">✕ Từ chối gỡ tin</span>
+                        )}
+                      </div>
+                    )}
+                    
                     <button className="btn-delete" onClick={() => handleDelete(property._id)}>
                       <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>

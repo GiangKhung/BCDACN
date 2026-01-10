@@ -1,6 +1,7 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
+import passport from '../config/passport.js'
 
 const router = express.Router()
 
@@ -137,7 +138,8 @@ const auth = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key')
-        const user = await User.findById(decoded.id).select('-password')
+        // Fix: decoded.userId not decoded.id
+        const user = await User.findById(decoded.userId).select('-password')
 
         if (!user) {
             return res.status(404).json({
@@ -238,6 +240,118 @@ router.put('/change-password', auth, async (req, res) => {
     } catch (error) {
         console.error('Change password error:', error)
         res.status(500).json({ message: 'Lỗi server' })
+    }
+})
+
+// ============================================
+// GOOGLE OAUTH ROUTES
+// ============================================
+
+// Khởi tạo Google OAuth
+router.get('/google',
+    passport.authenticate('google', {
+        scope: ['profile', 'email'],
+        session: false
+    })
+)
+
+// Google OAuth callback
+router.get('/google/callback',
+    passport.authenticate('google', {
+        session: false,
+        failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=google_auth_failed`
+    }),
+    (req, res) => {
+        try {
+            // Tạo JWT token
+            const token = generateToken(req.user._id)
+
+            // Redirect về client với token
+            const clientURL = process.env.CLIENT_URL || 'http://localhost:3000'
+            res.redirect(`${clientURL}/auth/google/success?token=${token}`)
+        } catch (error) {
+            console.error('Google callback error:', error)
+            res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=token_generation_failed`)
+        }
+    }
+)
+
+// Verify Google token từ client (Alternative method)
+router.post('/google/verify', async (req, res) => {
+    try {
+        const { credential } = req.body
+
+        if (!credential) {
+            return res.status(400).json({
+                success: false,
+                message: 'Thiếu Google credential'
+            })
+        }
+
+        // Verify Google token
+        const { OAuth2Client } = await import('google-auth-library')
+        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        })
+
+        const payload = ticket.getPayload()
+        const { sub: googleId, email, name, picture } = payload
+
+        // Tìm hoặc tạo user
+        let user = await User.findOne({ googleId })
+
+        if (!user) {
+            // Kiểm tra email đã tồn tại chưa
+            const existingUser = await User.findOne({ email })
+
+            if (existingUser) {
+                // Link Google account với existing user
+                existingUser.googleId = googleId
+                existingUser.authProvider = 'google'
+                existingUser.avatar = picture || existingUser.avatar
+                existingUser.isVerified = true
+                await existingUser.save()
+                user = existingUser
+            } else {
+                // Tạo user mới
+                user = await User.create({
+                    googleId,
+                    name,
+                    email,
+                    avatar: picture || '',
+                    authProvider: 'google',
+                    isVerified: true,
+                    password: Math.random().toString(36).slice(-8)
+                })
+            }
+        }
+
+        // Tạo JWT token
+        const token = generateToken(user._id)
+
+        res.json({
+            success: true,
+            message: 'Đăng nhập Google thành công',
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                avatar: user.avatar,
+                role: user.role,
+                authProvider: user.authProvider
+            }
+        })
+    } catch (error) {
+        console.error('Google verify error:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi xác thực Google'
+        })
     }
 })
 
