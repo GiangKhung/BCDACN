@@ -16,7 +16,18 @@ function PropertyDetail() {
   useEffect(() => {
     fetchProperty()
     checkIfSaved()
+    trackPropertyView()
   }, [id])
+
+  const trackPropertyView = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      await axios.post('http://localhost:5000/api/recommendations/track-view', { propertyId: id }, { headers })
+    } catch (error) {
+      console.error('Error tracking view:', error)
+    }
+  }
 
   const fetchProperty = async () => {
     try {

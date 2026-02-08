@@ -12,6 +12,9 @@ import removalRequestRouter from './routes/removalRequest.js'
 import statisticsRouter from './routes/statistics.js'
 import sepayWebhookRouter from './routes/sepayWebhook.js'
 import oauthRouter from './routes/oauth.js'
+import recommendationsRouter from './routes/recommendations.js'
+import chatbotRouter from './routes/chatbot.js'
+import pricePredictRouter from './routes/pricePredict.js'
 import {
     startExpiredPropertiesCheck,
     startExpirationWarningCheck,
@@ -46,6 +49,9 @@ app.use('/api/removal-request', removalRequestRouter)
 app.use('/api/statistics', statisticsRouter)
 app.use('/api/sepay', sepayWebhookRouter)
 app.use('/oauth', oauthRouter)
+app.use('/api/recommendations', recommendationsRouter)
+app.use('/api/chatbot', chatbotRouter)
+app.use('/api/price-predict', pricePredictRouter)
 
 app.get('/', (req, res) => {
     res.json({

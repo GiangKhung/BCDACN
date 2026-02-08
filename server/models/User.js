@@ -57,7 +57,25 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+    // Tracking & Recommendations
+    viewHistory: [{
+        property: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Property'
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    searchHistory: [{
+        query: Object,
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 }, {
     timestamps: true
 })

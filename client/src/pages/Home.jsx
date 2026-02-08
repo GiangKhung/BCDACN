@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PropertyCard from "../components/PropertyCard";
+import RecommendedProperties from "../components/RecommendedProperties";
 import "./Home.css";
 
 function Home() {
@@ -426,6 +427,11 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* Recommended Properties Section */}
+      <div className="container">
+        <RecommendedProperties />
+      </div>
 
       <section className="for-you-section">
         <div className="container">

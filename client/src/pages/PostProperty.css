@@ -644,3 +644,44 @@ ocation Input Styles */
     width: 18px;
     height: 18px;
 }
+
+/* AI Price Estimation Section */
+.ai-price-section {
+    margin: 25px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e6eaff 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 16px;
+}
+
+.btn-ai-estimate {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-ai-estimate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-ai-estimate span {
+    font-size: 20px;
+}
+
+.ai-price-section .price-prediction {
+    margin-top: 20px;
+}

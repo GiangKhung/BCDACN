@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import PricePrediction from '../components/PricePrediction'
 import './PostProperty.css'
 
 function PostProperty() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [showPricePrediction, setShowPricePrediction] = useState(false)
   const [images, setImages] = useState([])
   const [mapLocation, setMapLocation] = useState({
     lat: 10.8231,
@@ -386,6 +388,34 @@ function PostProperty() {
                   />
                   <small>Đơn vị: m²</small>
                 </div>
+              </div>
+
+              {/* AI Price Estimation */}
+              <div className="ai-price-section">
+                <button 
+                  type="button" 
+                  className="btn-ai-estimate"
+                  onClick={() => setShowPricePrediction(!showPricePrediction)}
+                >
+                  <span>🤖</span>
+                  {showPricePrediction ? 'Ẩn ước tính giá AI' : 'Ước tính giá bằng AI'}
+                </button>
+                
+                {showPricePrediction && (
+                  <PricePrediction 
+                    initialData={{
+                      area: formData.area,
+                      district: formData.district,
+                      propertyType: formData.propertyType,
+                      bedrooms: formData.bedrooms,
+                      bathrooms: formData.bathrooms
+                    }}
+                    onPriceSelect={(price) => {
+                      setFormData(prev => ({ ...prev, price: price.toString() }))
+                      setShowPricePrediction(false)
+                    }}
+                  />
+                )}
               </div>
 
               <div className="form-row">

@@ -28,6 +28,7 @@ import MyPayments from './pages/MyPayments'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminPayments from './pages/AdminPayments'
 import AdminRemovalRequests from './pages/AdminRemovalRequests'
+import ChatBot from './components/ChatBot'
 import './App.css'
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
           <Route path="/admin/removal-requests" element={<AdminRemovalRequests />} />
         </Routes>
         <Footer />
+        <ChatBot />
       </div>
     </Router>
   )
